@@ -3,6 +3,7 @@
 import { useState, useCallback, useRef, useEffect } from "react";
 import Link from "next/link";
 import { ArrowLeft, Award, Download, Check, X, RotateCcw } from "lucide-react";
+import { Panel, PanelGroup, PanelResizeHandle } from "react-resizable-panels";
 import { executeQuery, resultsMatch } from "@/lib/sqlEngine";
 import { SqlEditor } from "@/components/exercise/SqlEditor";
 import { SchemaPanel } from "@/components/exercise/SchemaPanel";
@@ -231,27 +232,34 @@ function QuizQuestion({
           <SchemaPanel schema={exercise.schema} />
         </div>
 
-        {/* Center: editor + builder */}
-        <div className="flex-1 flex flex-col p-4 gap-3 overflow-hidden">
-          <div className="flex-1 min-h-0">
-            <SqlEditor
-              value={query}
-              onChange={(v) => { setQuery(v); editorRef.current = v; }}
-              onExecute={handleExecute}
-              onClear={handleClear}
-              onSemicolon={handleSemicolon}
-              isLoading={isLoading}
-            />
-          </div>
-          <FragmentBuilder
-            schema={exercise.schema}
-            keywords={exercise.keywords_disponiveis}
-            funcoes={exercise.funcoes_disponiveis}
-            operadores={exercise.operadores_disponiveis}
-            valores={exercise.valores_disponiveis}
-            onInsert={handleInsert}
-          />
-        </div>
+        {/* Center: editor + builder com painéis redimensionáveis */}
+        <PanelGroup direction="vertical" className="flex-1 min-h-0" autoSaveId="sqlninja:cert-vertical">
+          <Panel defaultSize={55} minSize={30} className="overflow-hidden">
+            <div className="h-full p-4 pb-2">
+              <SqlEditor
+                value={query}
+                onChange={(v) => { setQuery(v); editorRef.current = v; }}
+                onExecute={handleExecute}
+                onClear={handleClear}
+                onSemicolon={handleSemicolon}
+                isLoading={isLoading}
+              />
+            </div>
+          </Panel>
+          <PanelResizeHandle className="h-px bg-white/8 hover:bg-white/20 active:bg-white/30 transition-colors cursor-row-resize mx-4" />
+          <Panel defaultSize={45} minSize={25} className="overflow-hidden">
+            <div className="h-full p-4 pt-2">
+              <FragmentBuilder
+                schema={exercise.schema}
+                keywords={exercise.keywords_disponiveis}
+                funcoes={exercise.funcoes_disponiveis}
+                operadores={exercise.operadores_disponiveis}
+                valores={exercise.valores_disponiveis}
+                onInsert={handleInsert}
+              />
+            </div>
+          </Panel>
+        </PanelGroup>
 
         {/* Right: feedback */}
         <div className="w-80 shrink-0 border-l border-white/8 p-5 flex flex-col gap-4">
