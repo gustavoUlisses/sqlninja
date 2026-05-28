@@ -2,6 +2,7 @@ import { notFound } from "next/navigation";
 import Link from "next/link";
 import { LEVELS, getLevelInfo } from "@/lib/levels";
 import { getExerciciosByNivel } from "@/lib/exercises";
+import { ExerciseList } from "@/components/exercise/ExerciseList";
 import type { Nivel } from "@/lib/types";
 import { ArrowLeft } from "lucide-react";
 
@@ -55,32 +56,7 @@ export default async function NivelPage({ params }: Props) {
           </Link>
         </div>
       ) : (
-        <div className="space-y-1">
-          {exercises.map((ex) => (
-            <Link
-              key={ex.id}
-              href={`/exercicios/${nivel}/${ex.id}`}
-              className="flex items-center justify-between rounded-lg border border-white/8 bg-white/3 px-5 py-4 hover:bg-white/6 hover:border-white/15 transition-colors group"
-            >
-              <div className="flex items-center gap-4">
-                <span className="text-xs font-mono text-white/25 tabular-nums w-6">
-                  {String(ex.numero).padStart(2, "0")}
-                </span>
-                <div>
-                  <p className="text-sm font-medium text-white/80 group-hover:text-white transition-colors">
-                    {ex.titulo}
-                  </p>
-                  <p className="text-xs text-white/30 mt-0.5 line-clamp-1">
-                    {ex.demanda.slice(0, 80)}…
-                  </p>
-                </div>
-              </div>
-              <span className="text-white/20 group-hover:text-white/40 transition-colors text-lg leading-none">
-                →
-              </span>
-            </Link>
-          ))}
-        </div>
+        <ExerciseList nivel={nivel} exercises={exercises} />
       )}
     </main>
   );

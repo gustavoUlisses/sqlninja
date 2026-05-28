@@ -128,13 +128,19 @@ export function ExerciseClient({
             </span>
             <div className="w-20 h-[3px] bg-white/10 rounded-full overflow-hidden">
               <div
-                className="h-full bg-white/60 rounded-full transition-all duration-500"
-                style={{ width: `${progressPct}%` }}
+                className="h-full rounded-full transition-all duration-500"
+                style={{
+                  width: `${progressPct}%`,
+                  backgroundColor: completedCount > 0 ? "#50fa7b" : "rgba(255,255,255,0.6)",
+                }}
               />
             </div>
           </div>
           {alreadyDone && (
-            <span className="flex items-center gap-1 text-xs text-white/40">
+            <span
+              className="flex items-center gap-1 text-xs font-medium"
+              style={{ color: "#50fa7b" }}
+            >
               <Check className="w-3 h-3" />
               Resolvido
             </span>

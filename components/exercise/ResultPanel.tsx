@@ -10,6 +10,9 @@ interface ResultPanelProps {
   onNext?: () => void;
 }
 
+const GREEN = "#50fa7b";
+const RED = "#ff5555";
+
 function ResultTable({
   columns,
   rows,
@@ -23,10 +26,16 @@ function ResultTable({
 }) {
   const borderColor =
     variant === "success"
-      ? "border-white/20"
+      ? "border-[#50fa7b]/30"
       : variant === "error"
-      ? "border-white/10"
+      ? "border-[#ff5555]/30"
       : "border-white/8";
+  const headerBg =
+    variant === "success"
+      ? "bg-[#50fa7b]/5"
+      : variant === "error"
+      ? "bg-[#ff5555]/5"
+      : "bg-white/3";
 
   return (
     <div>
@@ -34,9 +43,9 @@ function ResultTable({
       <div className={`rounded-lg border ${borderColor} overflow-auto`}>
         <table className="w-full text-xs font-mono">
           <thead>
-            <tr className="border-b border-white/8 bg-white/3">
+            <tr className={`border-b border-white/8 ${headerBg}`}>
               {columns.map((col) => (
-                <th key={col} className="px-3 py-2 text-left text-white/50 font-medium whitespace-nowrap">
+                <th key={col} className="px-3 py-2 text-left text-white/60 font-medium whitespace-nowrap">
                   {col}
                 </th>
               ))}
@@ -46,7 +55,7 @@ function ResultTable({
             {rows.map((row, i) => (
               <tr key={i} className="border-b border-white/5 last:border-0 hover:bg-white/3">
                 {columns.map((col) => (
-                  <td key={col} className="px-3 py-1.5 text-white/70 whitespace-nowrap">
+                  <td key={col} className="px-3 py-1.5 text-white/75 whitespace-nowrap">
                     {row[col] === null ? (
                       <span className="text-white/20 italic">NULL</span>
                     ) : (
@@ -84,11 +93,23 @@ export function ResultPanel({ output, isCorrect, expectedRows, onNext }: ResultP
   if (!output.ok) {
     return (
       <div className="space-y-3">
-        <div className="flex items-center gap-2 text-white/50">
-          <X className="w-4 h-4 flex-shrink-0" />
-          <span className="text-sm font-medium">Erro na query</span>
+        <div
+          className="flex items-center gap-2.5 rounded-lg border px-4 py-3"
+          style={{ backgroundColor: `${RED}15`, borderColor: `${RED}50` }}
+        >
+          <X className="w-4 h-4 flex-shrink-0" style={{ color: RED }} />
+          <span className="text-sm font-semibold" style={{ color: RED }}>
+            Erro na query
+          </span>
         </div>
-        <pre className="text-xs text-white/40 font-mono bg-white/3 border border-white/8 rounded-lg p-3 whitespace-pre-wrap leading-relaxed">
+        <pre
+          className="text-xs font-mono rounded-lg p-3 whitespace-pre-wrap leading-relaxed border"
+          style={{
+            backgroundColor: `${RED}08`,
+            borderColor: `${RED}20`,
+            color: `${RED}cc`,
+          }}
+        >
           {output.error}
         </pre>
       </div>
@@ -100,11 +121,18 @@ export function ResultPanel({ output, isCorrect, expectedRows, onNext }: ResultP
   if (isCorrect) {
     return (
       <div className="space-y-4">
-        <div className="flex items-center gap-2.5 rounded-lg bg-white/5 border border-white/15 px-4 py-3">
-          <Check className="w-4 h-4 text-white flex-shrink-0" />
+        <div
+          className="flex items-center gap-2.5 rounded-lg border px-4 py-3"
+          style={{ backgroundColor: `${GREEN}12`, borderColor: `${GREEN}40` }}
+        >
+          <Check className="w-4 h-4 flex-shrink-0" style={{ color: GREEN }} />
           <div>
-            <p className="text-sm font-semibold text-white">Correto!</p>
-            <p className="text-xs text-white/40 mt-0.5">Sua query retornou o resultado esperado.</p>
+            <p className="text-sm font-bold" style={{ color: GREEN }}>
+              Correto!
+            </p>
+            <p className="text-xs mt-0.5" style={{ color: `${GREEN}90` }}>
+              Sua query retornou o resultado esperado.
+            </p>
           </div>
         </div>
 
@@ -118,7 +146,10 @@ export function ResultPanel({ output, isCorrect, expectedRows, onNext }: ResultP
         {onNext && (
           <button
             onClick={onNext}
-            className="w-full py-2.5 rounded-lg bg-white text-black text-sm font-semibold hover:bg-white/90 transition-colors"
+            className="w-full py-2.5 rounded-lg text-sm font-semibold transition-colors"
+            style={{ backgroundColor: GREEN, color: "#000" }}
+            onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = "#3fe96d")}
+            onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = GREEN)}
           >
             Próximo exercício →
           </button>
@@ -129,9 +160,14 @@ export function ResultPanel({ output, isCorrect, expectedRows, onNext }: ResultP
 
   return (
     <div className="space-y-4">
-      <div className="flex items-center gap-2 text-white/40">
-        <X className="w-4 h-4 flex-shrink-0" />
-        <p className="text-sm font-medium">Resultado diferente do esperado</p>
+      <div
+        className="flex items-center gap-2.5 rounded-lg border px-4 py-3"
+        style={{ backgroundColor: `${RED}12`, borderColor: `${RED}40` }}
+      >
+        <X className="w-4 h-4 flex-shrink-0" style={{ color: RED }} />
+        <p className="text-sm font-semibold" style={{ color: RED }}>
+          Resultado diferente do esperado
+        </p>
       </div>
       <ResultTable
         columns={output.result.columns}
