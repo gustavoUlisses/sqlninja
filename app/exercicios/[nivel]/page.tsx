@@ -3,7 +3,7 @@ import Link from "next/link";
 import { LEVELS, getLevelInfo } from "@/lib/levels";
 import { getExerciciosByNivel } from "@/lib/exercises";
 import type { Nivel } from "@/lib/types";
-import { CheckCircle2, Lock, ArrowLeft } from "lucide-react";
+import { ArrowLeft } from "lucide-react";
 
 export function generateStaticParams() {
   return LEVELS.map((l) => ({ nivel: l.nivel }));
@@ -21,62 +21,63 @@ export default async function NivelPage({ params }: Props) {
   const exercises = getExerciciosByNivel(nivel as Nivel);
 
   return (
-    <main className="min-h-screen bg-zinc-950 px-6 py-10 max-w-3xl mx-auto">
+    <main className="min-h-screen bg-black px-6 py-10 max-w-2xl mx-auto">
       <Link
         href="/"
-        className="inline-flex items-center gap-1.5 text-zinc-500 hover:text-zinc-300 text-sm mb-8 transition-colors"
+        className="inline-flex items-center gap-1.5 text-white/40 hover:text-white/80 text-sm mb-10 transition-colors"
       >
         <ArrowLeft className="w-4 h-4" />
         Início
       </Link>
 
       <div className="mb-8">
-        <div
-          className={`inline-flex items-center text-xs font-semibold px-2.5 py-1 rounded-full border mb-3 ${levelInfo.corBg} ${levelInfo.cor}`}
-        >
+        <p className="text-xs text-white/30 uppercase tracking-widest font-medium mb-2">
           {levelInfo.label}
-        </div>
-        <h1 className="text-3xl font-bold text-zinc-100">{levelInfo.cargo}</h1>
-        <p className="text-zinc-500 mt-1.5">{levelInfo.descricao}</p>
-        <p className="text-sm text-zinc-600 mt-2">
+        </p>
+        <h1 className="text-2xl font-bold text-white">{levelInfo.cargo}</h1>
+        <p className="text-white/40 text-sm mt-1.5">{levelInfo.descricao}</p>
+        <p className="text-white/20 text-xs mt-3">
           {exercises.length} de {levelInfo.total} exercícios disponíveis
         </p>
       </div>
 
       {exercises.length === 0 ? (
-        <div className="text-center py-20 text-zinc-600">
-          <Lock className="w-10 h-10 mx-auto mb-3 opacity-40" />
-          <p className="font-medium">Exercícios em produção</p>
-          <p className="text-sm mt-1">Este nível ainda está sendo preparado.</p>
+        <div className="text-center py-20">
+          <p className="text-white/30 font-medium">Em breve</p>
+          <p className="text-white/20 text-sm mt-1">
+            Este nível está sendo preparado.
+          </p>
           <Link
             href="/exercicios/junior"
-            className="inline-block mt-6 text-sm text-emerald-400 hover:text-emerald-300 transition-colors"
+            className="inline-block mt-6 text-sm text-white/50 hover:text-white transition-colors"
           >
             Voltar ao Júnior →
           </Link>
         </div>
       ) : (
-        <div className="space-y-2">
+        <div className="space-y-1">
           {exercises.map((ex) => (
             <Link
               key={ex.id}
               href={`/exercicios/${nivel}/${ex.id}`}
-              className={`flex items-center justify-between rounded-xl border border-zinc-800 bg-zinc-900/50 px-5 py-4 hover:border-zinc-700 hover:bg-zinc-900 transition-colors group`}
+              className="flex items-center justify-between rounded-lg border border-white/8 bg-white/3 px-5 py-4 hover:bg-white/6 hover:border-white/15 transition-colors group"
             >
-              <div className="flex items-center gap-3">
-                <span className={`text-sm font-bold tabular-nums ${levelInfo.cor} opacity-60`}>
+              <div className="flex items-center gap-4">
+                <span className="text-xs font-mono text-white/25 tabular-nums w-6">
                   {String(ex.numero).padStart(2, "0")}
                 </span>
                 <div>
-                  <p className="text-sm font-semibold text-zinc-200 group-hover:text-white">
+                  <p className="text-sm font-medium text-white/80 group-hover:text-white transition-colors">
                     {ex.titulo}
                   </p>
-                  <p className="text-xs text-zinc-600 mt-0.5 line-clamp-1">
-                    {ex.demanda}
+                  <p className="text-xs text-white/30 mt-0.5 line-clamp-1">
+                    {ex.demanda.slice(0, 80)}…
                   </p>
                 </div>
               </div>
-              <CheckCircle2 className="w-4 h-4 text-zinc-700 flex-shrink-0" />
+              <span className="text-white/20 group-hover:text-white/40 transition-colors text-lg leading-none">
+                →
+              </span>
             </Link>
           ))}
         </div>

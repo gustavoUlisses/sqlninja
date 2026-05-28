@@ -5,7 +5,6 @@ import { sql } from "@codemirror/lang-sql";
 import { oneDark } from "@codemirror/theme-one-dark";
 import { EditorView } from "@codemirror/view";
 import { Play, Trash2 } from "lucide-react";
-import { Button } from "@/components/ui/button";
 
 interface SqlEditorProps {
   value: string;
@@ -16,9 +15,12 @@ interface SqlEditorProps {
 }
 
 const editorTheme = EditorView.theme({
-  "&": { height: "100%", minHeight: "160px" },
-  ".cm-scroller": { overflow: "auto", fontFamily: "var(--font-geist-mono)" },
+  "&": { height: "100%", minHeight: "160px", background: "transparent" },
+  ".cm-editor": { background: "transparent" },
+  ".cm-scroller": { overflow: "auto", fontFamily: "var(--font-geist-mono)", fontSize: "13px" },
   ".cm-content": { padding: "12px" },
+  ".cm-gutters": { background: "rgba(255,255,255,0.02)", borderRight: "1px solid rgba(255,255,255,0.06)" },
+  ".cm-lineNumbers .cm-gutterElement": { color: "rgba(255,255,255,0.2)" },
 });
 
 export function SqlEditor({ value, onChange, onExecute, onClear, isLoading }: SqlEditorProps) {
@@ -31,7 +33,10 @@ export function SqlEditor({ value, onChange, onExecute, onClear, isLoading }: Sq
 
   return (
     <div className="flex flex-col h-full">
-      <div className="flex-1 rounded-lg overflow-hidden border border-zinc-700 bg-zinc-900" onKeyDown={handleKeyDown}>
+      <div
+        className="flex-1 rounded-lg overflow-hidden border border-white/8 bg-white/3"
+        onKeyDown={handleKeyDown}
+      >
         <CodeMirror
           value={value}
           onChange={onChange}
@@ -49,29 +54,26 @@ export function SqlEditor({ value, onChange, onExecute, onClear, isLoading }: Sq
       </div>
 
       <div className="flex items-center justify-between mt-3 gap-2">
-        <p className="text-xs text-zinc-500">
-          <kbd className="px-1 py-0.5 bg-zinc-800 rounded text-zinc-400 text-xs">Ctrl+Enter</kbd>
+        <p className="text-xs text-white/20">
+          <kbd className="px-1.5 py-0.5 bg-white/6 rounded text-white/30 text-xs font-mono">Ctrl+Enter</kbd>
           {" "}para executar
         </p>
         <div className="flex gap-2">
-          <Button
-            variant="outline"
-            size="sm"
+          <button
             onClick={onClear}
-            className="text-zinc-400 border-zinc-700 hover:bg-zinc-800 hover:text-zinc-200"
+            className="flex items-center gap-1.5 text-xs text-white/30 hover:text-white/60 px-3 py-1.5 rounded-lg border border-white/8 hover:bg-white/4 transition-colors"
           >
-            <Trash2 className="w-3.5 h-3.5 mr-1" />
+            <Trash2 className="w-3 h-3" />
             Limpar
-          </Button>
-          <Button
-            size="sm"
+          </button>
+          <button
             onClick={onExecute}
             disabled={isLoading || !value.trim()}
-            className="bg-emerald-600 hover:bg-emerald-500 text-white font-semibold"
+            className="flex items-center gap-1.5 text-xs font-semibold bg-white text-black px-4 py-1.5 rounded-lg hover:bg-white/90 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
           >
-            <Play className="w-3.5 h-3.5 mr-1" />
-            {isLoading ? "Executando..." : "Executar"}
-          </Button>
+            <Play className="w-3 h-3" />
+            {isLoading ? "Executando…" : "Executar"}
+          </button>
         </div>
       </div>
     </div>

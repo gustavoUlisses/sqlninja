@@ -2,7 +2,7 @@
 
 import { useState, useCallback, useRef, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { Lightbulb, ArrowLeft, CheckCheck } from "lucide-react";
+import { Lightbulb, ArrowLeft, Check } from "lucide-react";
 import { SqlEditor } from "./SqlEditor";
 import { FragmentBuilder } from "./FragmentBuilder";
 import { ResultPanel } from "./ResultPanel";
@@ -54,10 +54,7 @@ export function ExerciseClient({
   }, []);
 
   const handleInsertFragment = useCallback((fragment: string) => {
-    setQuery((prev) => {
-      const trimmed = prev.trimEnd();
-      return trimmed + fragment;
-    });
+    setQuery((prev) => prev.trimEnd() + fragment);
   }, []);
 
   const handleExecute = useCallback(async () => {
@@ -85,11 +82,8 @@ export function ExerciseClient({
   }, [query, exercicio, alreadyDone]);
 
   const handleNext = useCallback(() => {
-    if (nextId) {
-      router.push(`/exercicios/${exercicio.nivel}/${nextId}`);
-    } else {
-      router.push(`/exercicios/${exercicio.nivel}`);
-    }
+    if (nextId) router.push(`/exercicios/${exercicio.nivel}/${nextId}`);
+    else router.push(`/exercicios/${exercicio.nivel}`);
   }, [nextId, exercicio.nivel, router]);
 
   const handleClear = useCallback(() => {
@@ -99,82 +93,82 @@ export function ExerciseClient({
   }, []);
 
   return (
-    <div className="flex flex-col h-screen bg-zinc-950 text-zinc-100">
+    <div className="flex flex-col h-screen bg-black text-white">
       {/* Header */}
-      <header className="flex items-center justify-between px-4 py-2.5 border-b border-zinc-800 bg-zinc-900/80 backdrop-blur shrink-0">
+      <header className="flex items-center justify-between px-5 py-3 border-b border-white/8 shrink-0">
         <div className="flex items-center gap-3">
           <button
             onClick={() => router.push(`/exercicios/${exercicio.nivel}`)}
-            className="flex items-center gap-1.5 text-zinc-400 hover:text-zinc-200 text-sm transition-colors"
+            className="flex items-center gap-1.5 text-white/40 hover:text-white/80 text-sm transition-colors"
           >
             <ArrowLeft className="w-4 h-4" />
-            <span className="hidden sm:inline">{levelInfo.label}</span>
+            <span className="hidden sm:inline font-medium">{levelInfo.label}</span>
           </button>
-          <div className="h-4 w-px bg-zinc-700" />
-          <span className="text-sm font-semibold text-zinc-100">
+          <div className="h-4 w-px bg-white/10" />
+          <span className="text-sm font-medium text-white/70">
             {exercicio.titulo}
           </span>
         </div>
 
         <div className="flex items-center gap-3">
           <div className="hidden sm:flex items-center gap-2">
-            <span className="text-xs text-zinc-500">
+            <span className="text-xs text-white/25 font-mono">
               {completedCount}/{totalInLevel}
             </span>
-            <div className="w-24 h-1.5 bg-zinc-800 rounded-full overflow-hidden">
+            <div className="w-20 h-[3px] bg-white/10 rounded-full overflow-hidden">
               <div
-                className="h-full bg-emerald-500 rounded-full transition-all"
+                className="h-full bg-white/60 rounded-full transition-all duration-500"
                 style={{ width: `${progressPct}%` }}
               />
             </div>
           </div>
-          <span className={`text-xs font-semibold px-2 py-1 rounded-full border ${levelInfo.corBg} ${levelInfo.cor}`}>
-            {levelInfo.label}
-          </span>
+          {alreadyDone && (
+            <span className="flex items-center gap-1 text-xs text-white/40">
+              <Check className="w-3 h-3" />
+              Resolvido
+            </span>
+          )}
         </div>
       </header>
 
-      {/* Main layout: 3 columns on desktop, stacked on mobile */}
+      {/* 3-column layout */}
       <div className="flex-1 flex overflow-hidden">
-        {/* Left panel: Demand + Schema */}
-        <div className="w-72 shrink-0 border-r border-zinc-800 overflow-y-auto p-4 space-y-5 hidden md:flex md:flex-col">
-          {/* Demand */}
+        {/* Left: Demand + Schema */}
+        <div className="w-68 shrink-0 border-r border-white/8 overflow-y-auto p-5 space-y-6 hidden md:flex md:flex-col">
           <div>
-            <div className="flex items-center gap-1.5 text-xs text-zinc-400 font-semibold uppercase tracking-wider mb-2">
-              <span>#{exercicio.numero}</span>
-              <span>Demanda</span>
-            </div>
-            <p className="text-sm text-zinc-200 leading-relaxed">
+            <p className="text-xs text-white/25 uppercase tracking-widest font-medium mb-3">
+              #{String(exercicio.numero).padStart(2, "0")} — Demanda
+            </p>
+            <p className="text-sm text-white/75 leading-relaxed">
               {exercicio.demanda}
             </p>
+
             {exercicio.dica && (
-              <button
-                onClick={() => setShowHint((h) => !h)}
-                className="mt-3 flex items-center gap-1.5 text-xs text-yellow-500 hover:text-yellow-400 transition-colors"
-              >
-                <Lightbulb className="w-3.5 h-3.5" />
-                {showHint ? "Esconder dica" : "Ver dica"}
-              </button>
-            )}
-            {showHint && exercicio.dica && (
-              <div className="mt-2 rounded-lg bg-yellow-900/20 border border-yellow-700/40 p-3 text-xs text-yellow-300">
-                {exercicio.dica}
-              </div>
+              <>
+                <button
+                  onClick={() => setShowHint((h) => !h)}
+                  className="mt-4 flex items-center gap-1.5 text-xs text-white/30 hover:text-white/60 transition-colors"
+                >
+                  <Lightbulb className="w-3.5 h-3.5" />
+                  {showHint ? "Esconder dica" : "Ver dica"}
+                </button>
+                {showHint && (
+                  <div className="mt-2 rounded-lg bg-white/4 border border-white/10 p-3 text-xs text-white/60 leading-relaxed">
+                    {exercicio.dica}
+                  </div>
+                )}
+              </>
             )}
           </div>
 
-          {/* Schema */}
           <SchemaPanel schema={exercicio.schema} />
         </div>
 
-        {/* Center panel: Editor + Fragment Builder */}
+        {/* Center: Editor + Fragment Builder */}
         <div className="flex-1 flex flex-col overflow-hidden p-4 gap-3">
-          {/* Mobile: demand */}
-          <div className="md:hidden">
-            <p className="text-sm font-semibold text-zinc-300 mb-1">
-              #{exercicio.numero} — {exercicio.titulo}
-            </p>
-            <p className="text-sm text-zinc-400">{exercicio.demanda}</p>
+          <div className="md:hidden mb-1">
+            <p className="text-xs text-white/30 mb-1">#{exercicio.numero} — {exercicio.titulo}</p>
+            <p className="text-sm text-white/60">{exercicio.demanda}</p>
           </div>
 
           <div className="flex-1 overflow-hidden">
@@ -197,19 +191,11 @@ export function ExerciseClient({
           />
         </div>
 
-        {/* Right panel: Result */}
-        <div className="w-96 shrink-0 border-l border-zinc-800 overflow-y-auto p-4">
-          <div className="flex items-center justify-between mb-3">
-            <span className="text-xs text-zinc-400 font-semibold uppercase tracking-wider">
-              Resultado
-            </span>
-            {isCorrect && (
-              <span className="flex items-center gap-1 text-xs text-emerald-400 font-semibold">
-                <CheckCheck className="w-3.5 h-3.5" />
-                Resolvido
-              </span>
-            )}
-          </div>
+        {/* Right: Result */}
+        <div className="w-88 shrink-0 border-l border-white/8 overflow-y-auto p-5">
+          <p className="text-xs text-white/25 uppercase tracking-widest font-medium mb-4">
+            Resultado
+          </p>
           <ResultPanel
             output={output}
             isCorrect={isCorrect}
@@ -219,22 +205,22 @@ export function ExerciseClient({
         </div>
       </div>
 
-      {/* Navigation footer */}
-      <div className="shrink-0 border-t border-zinc-800 bg-zinc-900/50 px-4 py-2 flex items-center justify-between">
+      {/* Footer nav */}
+      <div className="shrink-0 border-t border-white/8 px-5 py-2.5 flex items-center justify-between">
         <button
           onClick={() => prevId && router.push(`/exercicios/${exercicio.nivel}/${prevId}`)}
           disabled={!prevId}
-          className="text-xs text-zinc-400 hover:text-zinc-200 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+          className="text-xs text-white/30 hover:text-white/70 disabled:opacity-20 disabled:cursor-not-allowed transition-colors"
         >
           ← Anterior
         </button>
-        <span className="text-xs text-zinc-600">
-          Exercício {exercicio.numero} de {totalInLevel}
+        <span className="text-xs text-white/20 font-mono">
+          {exercicio.numero}/{totalInLevel}
         </span>
         <button
           onClick={() => nextId && router.push(`/exercicios/${exercicio.nivel}/${nextId}`)}
           disabled={!nextId}
-          className="text-xs text-zinc-400 hover:text-zinc-200 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+          className="text-xs text-white/30 hover:text-white/70 disabled:opacity-20 disabled:cursor-not-allowed transition-colors"
         >
           Próximo →
         </button>
