@@ -12,7 +12,7 @@ import { executeQuery, resultsMatch } from "@/lib/sqlEngine";
 import { markCompleted, getProgress, countCompleted } from "@/lib/progress";
 import { getLevelInfo } from "@/lib/levels";
 import { smartInsert } from "@/lib/smartInsert";
-import type { Exercicio, QueryOutput } from "@/lib/types";
+import type { Exercicio, QueryOutput, Row } from "@/lib/types";
 
 interface ExerciseClientProps {
   exercicio: Exercicio;
@@ -38,12 +38,38 @@ export function ExerciseClient({
   const [alreadyDone, setAlreadyDone] = useState(false);
   const [completedCount, setCompletedCount] = useState(completedInLevel);
   const [matchReason, setMatchReason] = useState<string | null>(null);
+  const [expectedRows, setExpectedRows] = useState<Row[]>([]);
   const editorRef = useRef<string>("");
+  const expectedCache = useRef<Map<string, Row[]>>(new Map());
 
   useEffect(() => {
     setCompletedCount(countCompleted(exercicio.nivel));
     setAlreadyDone(getProgress().exerciciosConcluidos.includes(exercicio.id));
   }, [exercicio.id, exercicio.nivel]);
+
+  // Pré-calcula expected_result executando o gabarito no client (com cache).
+  useEffect(() => {
+    let cancelled = false;
+    const cached = expectedCache.current.get(exercicio.id);
+    if (cached) {
+      setExpectedRows(cached);
+      return;
+    }
+    setExpectedRows([]);
+    (async () => {
+      const out = await executeQuery(exercicio.schema, exercicio.gabarito);
+      if (cancelled) return;
+      if (out.ok) {
+        expectedCache.current.set(exercicio.id, out.result.rows);
+        setExpectedRows(out.result.rows);
+      } else {
+        console.error(`Gabarito do exercício ${exercicio.id} falhou:`, out.error);
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [exercicio.id, exercicio.schema, exercicio.gabarito]);
 
   const levelInfo = getLevelInfo(exercicio.nivel);
   const progressPct = Math.round((completedCount / totalInLevel) * 100);
@@ -81,9 +107,20 @@ export function ExerciseClient({
     setOutput(result);
 
     if (result.ok) {
+      // Garante que expectedRows está pronto — se não, executa agora
+      let expected = expectedRows;
+      if (expected.length === 0) {
+        const expOut = await executeQuery(exercicio.schema, exercicio.gabarito);
+        if (expOut.ok) {
+          expected = expOut.result.rows;
+          expectedCache.current.set(exercicio.id, expected);
+          setExpectedRows(expected);
+        }
+      }
+
       const match = resultsMatch(
         result.result,
-        exercicio.expected_result,
+        expected,
         exercicio.ordem_importa ?? false
       );
       setIsCorrect(match.ok);
@@ -97,7 +134,7 @@ export function ExerciseClient({
       setIsCorrect(false);
     }
     setIsLoading(false);
-  }, [query, exercicio, alreadyDone]);
+  }, [query, exercicio, alreadyDone, expectedRows]);
 
   const handleNext = useCallback(() => {
     if (nextId) router.push(`/exercicios/${exercicio.nivel}/${nextId}`);
@@ -244,7 +281,7 @@ export function ExerciseClient({
               <ResultPanel
                 output={output}
                 isCorrect={isCorrect}
-                expectedRows={exercicio.expected_result}
+                expectedRows={expectedRows}
                 reason={matchReason}
                 onNext={isCorrect ? handleNext : undefined}
               />

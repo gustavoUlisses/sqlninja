@@ -11,6 +11,28 @@ export interface TabelaSchema {
   seed: string;
 }
 
+/** Definição de exercício no formato compacto (dataset compartilhado). */
+export interface ExercicioRaw {
+  id: string;
+  nivel: Nivel;
+  numero: number;
+  titulo: string;
+  demanda: string;
+  dica?: string;
+  /** Nomes das tabelas usadas, em ordem. Resolvidos via dataset do nível. */
+  tabelas: string[];
+  /** Query gabarito — usada para gerar expected_result automaticamente. */
+  gabarito: string;
+  /** Se true, a ordem das linhas precisa bater. Default: false. */
+  ordem_importa?: boolean;
+  /** Cláusulas SQL disponíveis no FragmentBuilder. */
+  keywords_disponiveis: string[];
+  funcoes_disponiveis?: string[];
+  operadores_disponiveis?: string[];
+  valores_disponiveis?: string[];
+}
+
+/** Exercício resolvido — schema + gabarito prontos para o client. */
 export interface Exercicio {
   id: string;
   nivel: Nivel;
@@ -19,14 +41,17 @@ export interface Exercicio {
   demanda: string;
   dica?: string;
   schema: TabelaSchema[];
-  expected_result: Row[];
-  /** Se true, a ordem das linhas precisa bater (use para exercícios com ORDER BY). Default: false. */
+  /** Query SQL de referência — executada no client para gerar expected_result. */
+  gabarito: string;
   ordem_importa?: boolean;
   keywords_disponiveis: string[];
   funcoes_disponiveis?: string[];
   operadores_disponiveis?: string[];
   valores_disponiveis?: string[];
 }
+
+/** Dataset compartilhado por nível: mapa de nome → TabelaSchema. */
+export type Dataset = Record<string, TabelaSchema>;
 
 export type Row = Record<string, string | number | null>;
 

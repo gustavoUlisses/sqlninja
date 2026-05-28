@@ -1,31 +1,50 @@
-import type { Exercicio, Nivel } from "./types";
-import juniorData from "@/data/junior.json";
-import plenoData from "@/data/pleno.json";
-import seniorData from "@/data/senior.json";
-import especialistaData from "@/data/especialista.json";
-import ninjaData from "@/data/ninja.json";
+import type { Dataset, Exercicio, ExercicioRaw, Nivel } from "./types";
+import { makeExercicio } from "./exerciseLoader";
 
-const DATA: Record<Nivel, Exercicio[]> = {
-  junior: juniorData as Exercicio[],
-  pleno: plenoData as Exercicio[],
-  senior: seniorData as Exercicio[],
-  especialista: especialistaData as Exercicio[],
-  ninja: ninjaData as Exercicio[],
+import { DATASET_JUNIOR } from "@/data/datasets/junior";
+import { EXERCICIOS_JUNIOR } from "@/data/exercicios/junior";
+
+const RAW: Record<Nivel, ExercicioRaw[]> = {
+  junior: EXERCICIOS_JUNIOR,
+  pleno: [],
+  senior: [],
+  especialista: [],
+  ninja: [],
+};
+
+const DATASETS: Record<Nivel, Dataset> = {
+  junior: DATASET_JUNIOR,
+  pleno: {},
+  senior: {},
+  especialista: {},
+  ninja: {},
 };
 
 export function getExerciciosByNivel(nivel: Nivel): Exercicio[] {
-  return DATA[nivel] ?? [];
+  const raws = RAW[nivel] ?? [];
+  const ds = DATASETS[nivel] ?? {};
+  return raws.map((raw) => makeExercicio(raw, ds));
 }
 
 export function getExercicioById(nivel: Nivel, id: string): Exercicio | null {
-  return DATA[nivel]?.find((e) => e.id === id) ?? null;
+  const all = getExerciciosByNivel(nivel);
+  return all.find((e) => e.id === id) ?? null;
+}
+
+export function getExercicioRawById(
+  nivel: Nivel,
+  id: string
+): { raw: ExercicioRaw; dataset: Dataset } | null {
+  const raw = (RAW[nivel] ?? []).find((e) => e.id === id);
+  if (!raw) return null;
+  return { raw, dataset: DATASETS[nivel] };
 }
 
 export function getAdjacentIds(
   nivel: Nivel,
   currentId: string
 ): { prev: string | null; next: string | null } {
-  const all = DATA[nivel] ?? [];
+  const all = RAW[nivel] ?? [];
   const idx = all.findIndex((e) => e.id === currentId);
   return {
     prev: idx > 0 ? all[idx - 1].id : null,
