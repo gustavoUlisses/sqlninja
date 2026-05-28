@@ -99,9 +99,9 @@ export function FragmentBuilder({
   const ops = allOps.length > 0 ? allOps : DEFAULT_OPERATORS;
 
   return (
-    <div className="rounded-xl border border-white/10 bg-gradient-to-b from-zinc-950 to-zinc-900/60 overflow-hidden shadow-lg shadow-black/20">
+    <div className="h-full rounded-xl border border-white/10 bg-gradient-to-b from-zinc-950 to-zinc-900/60 overflow-hidden shadow-lg shadow-black/20 flex flex-col">
       {/* Tabs */}
-      <div className="flex items-center gap-1 px-2 py-1.5 border-b border-white/8 bg-black/40">
+      <div className="flex items-center gap-1 px-2 py-1.5 border-b border-white/8 bg-black/40 shrink-0">
         <TabPill
           active={tab === "tabela"}
           onClick={() => setTab("tabela")}
@@ -123,11 +123,11 @@ export function FragmentBuilder({
       </div>
 
       {/* Content */}
-      <div className="min-h-[150px]">
+      <div className="flex-1 min-h-0 overflow-hidden">
         {tab === "tabela" && (
-          <div className="flex">
+          <div className="flex h-full">
             {/* Esquerda: cláusulas */}
-            <div className="w-40 shrink-0 border-r border-white/8 p-2 space-y-1">
+            <div className="w-40 shrink-0 border-r border-white/8 p-2 space-y-1 overflow-y-auto">
               <p className="text-[10px] uppercase tracking-widest text-white/25 font-medium px-1 mb-1.5">
                 Cláusulas
               </p>
@@ -143,7 +143,7 @@ export function FragmentBuilder({
             </div>
 
             {/* Direita: schema */}
-            <div className="flex-1 max-h-64 overflow-y-auto">
+            <div className="flex-1 overflow-y-auto">
               <p className="text-[10px] uppercase tracking-widest text-white/25 font-medium px-3 pt-2 pb-1.5">
                 Schema
               </p>
@@ -189,7 +189,7 @@ export function FragmentBuilder({
         )}
 
         {tab === "funcoes" && (
-          <div className="p-4">
+          <div className="h-full overflow-y-auto p-4">
             <p className="text-[10px] uppercase tracking-widest text-white/25 font-medium mb-2.5">
               Agregação & Texto
             </p>
@@ -209,7 +209,7 @@ export function FragmentBuilder({
         )}
 
         {tab === "filtros" && (
-          <div className="p-4 space-y-4">
+          <div className="h-full overflow-y-auto p-4 space-y-4">
             <div>
               <p className="text-[10px] uppercase tracking-widest text-white/25 font-medium mb-2.5">
                 Operadores

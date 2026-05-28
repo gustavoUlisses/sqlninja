@@ -202,7 +202,7 @@ export function ExerciseClient({
 
             <PanelGroup direction="vertical" className="flex-1 min-h-0">
               {/* Editor */}
-              <Panel defaultSize={65} minSize={30} className="overflow-hidden">
+              <Panel defaultSize={50} minSize={25} className="overflow-hidden">
                 <div className="h-full p-4 pb-2">
                   <SqlEditor
                     value={query}
@@ -218,8 +218,8 @@ export function ExerciseClient({
               <PanelResizeHandle className="h-px bg-white/8 hover:bg-white/20 active:bg-white/30 transition-colors cursor-row-resize mx-4" />
 
               {/* Fragment Builder */}
-              <Panel defaultSize={35} minSize={20} className="overflow-auto">
-                <div className="p-4 pt-2">
+              <Panel defaultSize={50} minSize={25} className="overflow-hidden">
+                <div className="h-full p-4 pt-2">
                   <FragmentBuilder
                     schema={exercicio.schema}
                     keywords={exercicio.keywords_disponiveis}
