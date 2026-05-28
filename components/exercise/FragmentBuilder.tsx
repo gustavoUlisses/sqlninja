@@ -1,6 +1,8 @@
 "use client";
 
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { useState } from "react";
+import { Database, FunctionSquare, Sliders } from "lucide-react";
+import { TokenButton } from "./TokenButton";
 import type { TabelaSchema } from "@/lib/types";
 
 interface FragmentBuilderProps {
@@ -12,7 +14,6 @@ interface FragmentBuilderProps {
   onInsert: (fragment: string) => void;
 }
 
-// Tudo que pertence à aba "Tabela" (lado esquerdo, lista vertical)
 const CLAUSE_ORDER = [
   "SELECT", "SELECT DISTINCT", "DISTINCT",
   "FROM", "WHERE", "GROUP BY", "HAVING", "ORDER BY", "LIMIT",
@@ -32,9 +33,6 @@ const DEFAULT_OPERATORS = [
   "IS NULL", "IS NOT NULL",
 ];
 
-// Cláusulas estruturais (entram como "botão grande" na coluna esquerda).
-// Tudo o que NÃO está aqui e o exercício listou em `keywords_disponiveis`
-// será automaticamente movido para "Filtros & Valores".
 const STRUCTURAL_CLAUSES = new Set([
   "SELECT", "SELECT DISTINCT", "DISTINCT",
   "FROM", "WHERE", "GROUP BY", "HAVING", "ORDER BY", "LIMIT",
@@ -43,47 +41,29 @@ const STRUCTURAL_CLAUSES = new Set([
   "CASE", "WHEN", "THEN", "ELSE", "END",
 ]);
 
-function ClauseButton({ label, onClick }: { label: string; onClick: () => void }) {
-  return (
-    <button
-      onClick={onClick}
-      className="w-full text-left px-3 py-2 rounded border border-white/10 bg-white/3 text-xs font-mono font-semibold text-white/70 hover:bg-white/8 hover:text-white hover:border-white/25 transition-colors cursor-pointer"
-    >
-      {label}
-    </button>
-  );
-}
+type TabId = "tabela" | "funcoes" | "filtros";
 
-function ColRow({ label, onClick, bold }: { label: string; onClick: () => void; bold?: boolean }) {
+function TabPill({
+  active,
+  onClick,
+  icon,
+  label,
+}: {
+  active: boolean;
+  onClick: () => void;
+  icon: React.ReactNode;
+  label: string;
+}) {
   return (
     <button
       onClick={onClick}
-      className={`w-full text-left px-3 py-1.5 text-xs font-mono text-white/70 hover:text-white hover:bg-white/6 transition-colors cursor-pointer ${
-        bold ? "font-semibold" : ""
+      className={`flex items-center gap-1.5 px-3 h-7 rounded-md text-xs font-medium transition-all duration-150 cursor-pointer outline-none ${
+        active
+          ? "bg-white/[0.08] text-white"
+          : "text-white/40 hover:text-white/70 hover:bg-white/[0.04]"
       }`}
     >
-      {label}
-    </button>
-  );
-}
-
-function SmallTag({ label, onClick }: { label: string; onClick: () => void }) {
-  return (
-    <button
-      onClick={onClick}
-      className="px-2.5 py-1 rounded border border-white/10 bg-white/3 text-xs font-mono text-white/60 hover:bg-white/8 hover:text-white hover:border-white/25 transition-colors cursor-pointer"
-    >
-      {label}
-    </button>
-  );
-}
-
-function PunctButton({ label, onClick }: { label: string; onClick: () => void }) {
-  return (
-    <button
-      onClick={onClick}
-      className="px-3 py-1 rounded border border-white/10 bg-white/3 text-sm font-mono font-bold text-white/60 hover:bg-white/8 hover:text-white hover:border-white/25 transition-colors cursor-pointer"
-    >
+      <span className={active ? "text-white/80" : "text-white/30"}>{icon}</span>
       {label}
     </button>
   );
@@ -97,7 +77,9 @@ export function FragmentBuilder({
   valores,
   onInsert,
 }: FragmentBuilderProps) {
-  // Separa as keywords do exercício entre cláusulas estruturais e operadores
+  const [tab, setTab] = useState<TabId>("tabela");
+
+  // Separa keywords do JSON em cláusulas vs operadores
   const clausesFromExercise: string[] = [];
   const operatorsFromKeywords: string[] = [];
   for (const kw of keywords) {
@@ -105,117 +87,187 @@ export function FragmentBuilder({
     else operatorsFromKeywords.push(kw);
   }
 
-  // Cláusulas: usa do exercício se houver, senão fallback canônico
-  const clauses = clausesFromExercise.length > 0
-    ? clausesFromExercise
-    : ["SELECT", "FROM", "WHERE", "ORDER BY", "LIMIT"];
-
-  // Ordenar segundo CLAUSE_ORDER para apresentação consistente
+  const clauses =
+    clausesFromExercise.length > 0
+      ? clausesFromExercise
+      : ["SELECT", "FROM", "WHERE", "ORDER BY", "LIMIT"];
   const orderedClauses = CLAUSE_ORDER.filter((c) => clauses.includes(c));
 
-  // Funções: usa do exercício, senão default pequeno
   const fns = funcoes && funcoes.length > 0 ? funcoes : DEFAULT_FUNCTIONS;
-
-  // Operadores: junta os do exercício + os movidos de keywords
   const opsFromExercise = operadores && operadores.length > 0 ? operadores : [];
   const allOps = Array.from(new Set([...operatorsFromKeywords, ...opsFromExercise]));
   const ops = allOps.length > 0 ? allOps : DEFAULT_OPERATORS;
 
   return (
-    <div className="border border-white/8 rounded-lg bg-[#1e1f29] overflow-hidden">
-      <Tabs defaultValue="tabela">
-        <TabsList className="w-full bg-[#191a24] rounded-none border-b border-white/8 h-9 px-2 gap-1 justify-start">
-          <TabsTrigger value="tabela" className="text-xs px-3 h-7 rounded data-[state=active]:bg-white/10 data-[state=active]:text-white text-white/40 hover:text-white/70 transition-colors">
-            Tabela
-          </TabsTrigger>
-          <TabsTrigger value="funcoes" className="text-xs px-3 h-7 rounded data-[state=active]:bg-white/10 data-[state=active]:text-white text-white/40 hover:text-white/70 transition-colors">
-            Funções
-          </TabsTrigger>
-          <TabsTrigger value="filtros" className="text-xs px-3 h-7 rounded data-[state=active]:bg-white/10 data-[state=active]:text-white text-white/40 hover:text-white/70 transition-colors">
-            Filtros & Valores
-          </TabsTrigger>
-        </TabsList>
+    <div className="rounded-xl border border-white/10 bg-gradient-to-b from-zinc-950 to-zinc-900/60 overflow-hidden shadow-lg shadow-black/20">
+      {/* Tabs */}
+      <div className="flex items-center gap-1 px-2 py-1.5 border-b border-white/8 bg-black/40">
+        <TabPill
+          active={tab === "tabela"}
+          onClick={() => setTab("tabela")}
+          icon={<Database className="w-3 h-3" />}
+          label="Tabela"
+        />
+        <TabPill
+          active={tab === "funcoes"}
+          onClick={() => setTab("funcoes")}
+          icon={<FunctionSquare className="w-3 h-3" />}
+          label="Funções"
+        />
+        <TabPill
+          active={tab === "filtros"}
+          onClick={() => setTab("filtros")}
+          icon={<Sliders className="w-3 h-3" />}
+          label="Filtros & Valores"
+        />
+      </div>
 
-        {/* Tab: Tabela */}
-        <TabsContent value="tabela" className="mt-0">
-          <div className="flex min-h-[160px]">
+      {/* Content */}
+      <div className="min-h-[150px]">
+        {tab === "tabela" && (
+          <div className="flex">
             {/* Esquerda: cláusulas */}
-            <div className="w-36 shrink-0 border-r border-white/8 p-2 space-y-1">
+            <div className="w-40 shrink-0 border-r border-white/8 p-2 space-y-1">
+              <p className="text-[10px] uppercase tracking-widest text-white/25 font-medium px-1 mb-1.5">
+                Cláusulas
+              </p>
               {orderedClauses.map((kw) => (
-                <ClauseButton key={kw} label={kw} onClick={() => onInsert(kw)} />
+                <TokenButton
+                  key={kw}
+                  label={kw}
+                  token={kw}
+                  variant="clause"
+                  onClick={() => onInsert(kw)}
+                />
               ))}
             </div>
 
             {/* Direita: schema */}
-            <div className="flex-1 overflow-y-auto max-h-60">
+            <div className="flex-1 max-h-64 overflow-y-auto">
+              <p className="text-[10px] uppercase tracking-widest text-white/25 font-medium px-3 pt-2 pb-1.5">
+                Schema
+              </p>
               {schema.map((table) => (
-                <div key={table.nome}>
-                  <div className="flex items-center border-b border-white/8 bg-white/3">
-                    <button
+                <div key={table.nome} className="mb-1">
+                  <div className="flex items-stretch border-y border-white/8 bg-white/[0.03]">
+                    <TokenButton
+                      label="*"
+                      token="*"
+                      variant="punct"
+                      className="!w-10 !h-auto !rounded-none border-0 border-r border-white/8 !bg-transparent text-[#f1fa8c]/80 hover:!bg-[#f1fa8c]/10"
                       onClick={() => onInsert("*")}
-                      className="px-3 py-2 text-xs font-mono font-bold text-white/50 hover:text-white transition-colors border-r border-white/8"
-                      title="Inserir asterisco"
-                    >
-                      *
-                    </button>
-                    <button
+                    />
+                    <TokenButton
+                      label={table.nome}
+                      variant="schema-header"
+                      description={`Tabela: ${table.nome} (${table.colunas.length} colunas). Clique para inserir o nome.`}
                       onClick={() => onInsert(table.nome)}
-                      className="flex-1 px-3 py-2 text-xs font-mono font-semibold text-white/70 hover:text-white text-left transition-colors"
-                      title="Inserir nome da tabela"
-                    >
-                      {table.nome}
-                    </button>
+                    />
                   </div>
-                  <div className="divide-y divide-white/4">
+                  <div>
                     {table.colunas.map((col) => (
-                      <ColRow key={col.nome} label={col.nome} onClick={() => onInsert(col.nome)} />
+                      <div
+                        key={col.nome}
+                        className="flex items-center justify-between border-b border-white/[0.04] last:border-0 group hover:bg-white/[0.03]"
+                      >
+                        <TokenButton
+                          label={col.nome}
+                          variant="schema"
+                          description={`${col.nome} · ${col.tipo}`}
+                          onClick={() => onInsert(col.nome)}
+                        />
+                        <span className="text-[10px] font-mono text-white/20 pr-3 group-hover:text-white/35">
+                          {col.tipo}
+                        </span>
+                      </div>
                     ))}
                   </div>
                 </div>
               ))}
             </div>
           </div>
-        </TabsContent>
+        )}
 
-        {/* Tab: Funções */}
-        <TabsContent value="funcoes" className="mt-0 p-3">
-          <div className="flex flex-wrap gap-1.5">
-            {fns.map((fn) => (
-              <SmallTag key={fn} label={fn} onClick={() => onInsert(fn)} />
-            ))}
-          </div>
-        </TabsContent>
-
-        {/* Tab: Filtros & Valores */}
-        <TabsContent value="filtros" className="mt-0 p-3 space-y-3">
-          <div>
-            <p className="text-xs text-white/25 uppercase tracking-widest mb-2">Operadores</p>
+        {tab === "funcoes" && (
+          <div className="p-4">
+            <p className="text-[10px] uppercase tracking-widest text-white/25 font-medium mb-2.5">
+              Agregação & Texto
+            </p>
             <div className="flex flex-wrap gap-1.5">
-              {ops.map((op) => (
-                <SmallTag key={op} label={op} onClick={() => onInsert(op)} />
+              {fns.map((fn) => (
+                <TokenButton
+                  key={fn}
+                  label={fn}
+                  token={fn}
+                  variant="tag"
+                  onClick={() => onInsert(fn)}
+                  className="hover:!text-[#50fa7b] hover:!border-[#50fa7b]/40 hover:!bg-[#50fa7b]/8"
+                />
               ))}
             </div>
           </div>
-          <div>
-            <p className="text-xs text-white/25 uppercase tracking-widest mb-2">Pontuação</p>
-            <div className="flex flex-wrap gap-1.5">
-              <PunctButton label="(" onClick={() => onInsert("(")} />
-              <PunctButton label=")" onClick={() => onInsert(")")} />
-              <PunctButton label="," onClick={() => onInsert(",")} />
-            </div>
-          </div>
-          {valores && valores.length > 0 && (
+        )}
+
+        {tab === "filtros" && (
+          <div className="p-4 space-y-4">
             <div>
-              <p className="text-xs text-white/25 uppercase tracking-widest mb-2">Valores do exercício</p>
+              <p className="text-[10px] uppercase tracking-widest text-white/25 font-medium mb-2.5">
+                Operadores
+              </p>
               <div className="flex flex-wrap gap-1.5">
-                {valores.map((v) => (
-                  <SmallTag key={v} label={v} onClick={() => onInsert(v)} />
+                {ops.map((op) => (
+                  <TokenButton
+                    key={op}
+                    label={op}
+                    token={op}
+                    variant="tag"
+                    onClick={() => onInsert(op)}
+                    className="hover:!text-[#ff79c6] hover:!border-[#ff79c6]/40 hover:!bg-[#ff79c6]/8"
+                  />
                 ))}
               </div>
             </div>
-          )}
-        </TabsContent>
-      </Tabs>
+
+            <div>
+              <p className="text-[10px] uppercase tracking-widest text-white/25 font-medium mb-2.5">
+                Pontuação
+              </p>
+              <div className="flex flex-wrap gap-1.5">
+                {["(", ")", ","].map((p) => (
+                  <TokenButton
+                    key={p}
+                    label={p}
+                    token={p}
+                    variant="punct"
+                    onClick={() => onInsert(p)}
+                    className="hover:!text-[#f1fa8c] hover:!border-[#f1fa8c]/40 hover:!bg-[#f1fa8c]/8"
+                  />
+                ))}
+              </div>
+            </div>
+
+            {valores && valores.length > 0 && (
+              <div>
+                <p className="text-[10px] uppercase tracking-widest text-white/25 font-medium mb-2.5">
+                  Valores deste exercício
+                </p>
+                <div className="flex flex-wrap gap-1.5">
+                  {valores.map((v) => (
+                    <TokenButton
+                      key={v}
+                      label={v}
+                      variant="tag"
+                      description={`Valor sugerido: ${v}`}
+                      onClick={() => onInsert(v)}
+                      className="hover:!text-[#8be9fd] hover:!border-[#8be9fd]/40 hover:!bg-[#8be9fd]/8"
+                    />
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
+        )}
+      </div>
     </div>
   );
 }
