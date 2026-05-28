@@ -16,7 +16,7 @@ interface SqlEditorProps {
 }
 
 const editorTheme = EditorView.theme({
-  "&": { height: "100%", minHeight: "160px", background: "transparent" },
+  "&": { height: "100%", minHeight: "120px", background: "transparent" },
   ".cm-editor": { background: "transparent" },
   ".cm-scroller": { overflow: "auto", fontFamily: "var(--font-geist-mono)", fontSize: "13px" },
   ".cm-content": { padding: "12px" },

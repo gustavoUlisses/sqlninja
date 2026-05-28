@@ -235,35 +235,45 @@ export function ExerciseClient({
 
           <PanelResizeHandle className="w-px bg-white/8 hover:bg-white/20 active:bg-white/30 transition-colors cursor-col-resize hidden md:block" />
 
-          {/* Center panel: Editor + Fragments */}
+          {/* Center panel: Editor + Fragments (vertical resize) */}
           <Panel defaultSize={48} minSize={30} className="flex flex-col overflow-hidden">
-            <div className="flex-1 flex flex-col p-4 gap-3 overflow-hidden">
-              {/* Mobile: demand */}
-              <div className="md:hidden mb-1">
-                <p className="text-xs text-white/30 mb-1">#{exercicio.numero} — {exercicio.titulo}</p>
-                <p className="text-sm text-white/60">{exercicio.demanda}</p>
-              </div>
-
-              <div className="flex-1 overflow-hidden min-h-0">
-                <SqlEditor
-                  value={query}
-                  onChange={handleQueryChange}
-                  onExecute={handleExecute}
-                  onClear={handleClear}
-                  onSemicolon={handleSemicolon}
-                  isLoading={isLoading}
-                />
-              </div>
-
-              <FragmentBuilder
-                schema={exercicio.schema}
-                keywords={exercicio.keywords_disponiveis}
-                funcoes={exercicio.funcoes_disponiveis}
-                operadores={exercicio.operadores_disponiveis}
-                valores={exercicio.valores_disponiveis}
-                onInsert={handleInsertFragment}
-              />
+            {/* Mobile: demand */}
+            <div className="md:hidden px-4 pt-4 pb-2">
+              <p className="text-xs text-white/30 mb-1">#{exercicio.numero} — {exercicio.titulo}</p>
+              <p className="text-sm text-white/60">{exercicio.demanda}</p>
             </div>
+
+            <PanelGroup direction="vertical" className="flex-1 min-h-0">
+              {/* Editor */}
+              <Panel defaultSize={65} minSize={30} className="overflow-hidden">
+                <div className="h-full p-4 pb-2">
+                  <SqlEditor
+                    value={query}
+                    onChange={handleQueryChange}
+                    onExecute={handleExecute}
+                    onClear={handleClear}
+                    onSemicolon={handleSemicolon}
+                    isLoading={isLoading}
+                  />
+                </div>
+              </Panel>
+
+              <PanelResizeHandle className="h-px bg-white/8 hover:bg-white/20 active:bg-white/30 transition-colors cursor-row-resize mx-4" />
+
+              {/* Fragment Builder */}
+              <Panel defaultSize={35} minSize={20} className="overflow-auto">
+                <div className="p-4 pt-2">
+                  <FragmentBuilder
+                    schema={exercicio.schema}
+                    keywords={exercicio.keywords_disponiveis}
+                    funcoes={exercicio.funcoes_disponiveis}
+                    operadores={exercicio.operadores_disponiveis}
+                    valores={exercicio.valores_disponiveis}
+                    onInsert={handleInsertFragment}
+                  />
+                </div>
+              </Panel>
+            </PanelGroup>
           </Panel>
 
           <PanelResizeHandle className="w-px bg-white/8 hover:bg-white/20 active:bg-white/30 transition-colors cursor-col-resize" />
