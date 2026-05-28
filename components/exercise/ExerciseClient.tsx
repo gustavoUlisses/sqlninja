@@ -9,63 +9,10 @@ import { FragmentBuilder } from "./FragmentBuilder";
 import { ResultPanel } from "./ResultPanel";
 import { SchemaPanel } from "./SchemaPanel";
 import { executeQuery, resultsMatch } from "@/lib/sqlEngine";
-import { markCompleted, getProgress } from "@/lib/progress";
+import { markCompleted, getProgress, countCompleted } from "@/lib/progress";
 import { getLevelInfo } from "@/lib/levels";
+import { smartInsert } from "@/lib/smartInsert";
 import type { Exercicio, QueryOutput } from "@/lib/types";
-
-// SQL clause keywords that should start on a new line
-const NEWLINE_KEYWORDS = new Set([
-  "FROM", "WHERE", "GROUP BY", "HAVING", "ORDER BY", "LIMIT",
-  "JOIN", "INNER JOIN", "LEFT JOIN", "RIGHT JOIN", "FULL JOIN", "CROSS JOIN",
-  "ON", "UNION", "UNION ALL", "WITH",
-]);
-
-// Indented sub-clause keywords
-const INDENT_KEYWORDS = new Set(["AND", "OR", "NOT"]);
-
-function smartInsert(current: string, fragment: string): string {
-  const raw = fragment.trim();
-  const trimmed = current.trimEnd();
-
-  // ";" just appends
-  if (raw === ";") return trimmed + ";";
-
-  // Clause keywords: new line
-  if (NEWLINE_KEYWORDS.has(raw)) {
-    if (trimmed === "") return raw + " ";
-    return trimmed + "\n" + raw + " ";
-  }
-
-  // AND / OR: new line with indent
-  if (INDENT_KEYWORDS.has(raw)) {
-    if (trimmed === "") return raw + " ";
-    return trimmed + "\n  " + raw + " ";
-  }
-
-  // SELECT at start
-  if (raw === "SELECT" || raw === "SELECT DISTINCT") {
-    if (trimmed === "") return raw + " ";
-    return trimmed + "\n" + raw + " ";
-  }
-
-  // DISTINCT after SELECT
-  if (raw === "DISTINCT") {
-    return trimmed + " DISTINCT ";
-  }
-
-  // Column names: if we're right after SELECT or a comma, separate with ", "
-  // Detect if the last non-whitespace char is a column/identifier (add comma)
-  const lastLine = trimmed.split("\n").pop() ?? "";
-  const isAfterSelectLine = /^\s*SELECT(\s+DISTINCT)?\s+\S/i.test(lastLine);
-  const endsWithIdentifier = /[\w)"']$/.test(trimmed);
-
-  if (isAfterSelectLine && endsWithIdentifier && !raw.startsWith("'") && !/^[0-9]/.test(raw)) {
-    return trimmed + ", " + raw.trimStart();
-  }
-
-  // Operators and values: just spaces
-  return trimmed + " " + raw.trimStart();
-}
 
 interface ExerciseClientProps {
   exercicio: Exercicio;
@@ -93,11 +40,8 @@ export function ExerciseClient({
   const editorRef = useRef<string>("");
 
   useEffect(() => {
-    const p = getProgress();
-    const prefix = exercicio.nivel.slice(0, 2);
-    const count = p.exerciciosConcluidos.filter((id) => id.startsWith(prefix)).length;
-    setCompletedCount(count);
-    setAlreadyDone(p.exerciciosConcluidos.includes(exercicio.id));
+    setCompletedCount(countCompleted(exercicio.nivel));
+    setAlreadyDone(getProgress().exerciciosConcluidos.includes(exercicio.id));
   }, [exercicio.id, exercicio.nivel]);
 
   const levelInfo = getLevelInfo(exercicio.nivel);

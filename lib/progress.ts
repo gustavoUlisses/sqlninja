@@ -2,6 +2,14 @@ import type { Nivel, ProgressoUsuario } from "./types";
 
 const KEY = "sqlninja_progress";
 
+const NIVEL_PREFIX: Record<Nivel, string> = {
+  junior: "jr-",
+  pleno: "pl-",
+  senior: "sr-",
+  especialista: "es-",
+  ninja: "nj-",
+};
+
 function defaultProgress(): ProgressoUsuario {
   return { exerciciosConcluidos: [], nivelAtual: "junior" };
 }
@@ -31,11 +39,16 @@ export function isCompleted(id: string): boolean {
 
 export function countCompleted(nivel: Nivel): number {
   const p = getProgress();
-  return p.exerciciosConcluidos.filter((id) => id.startsWith(nivel.slice(0, 2))).length;
+  const prefix = NIVEL_PREFIX[nivel];
+  return p.exerciciosConcluidos.filter((id) => id.startsWith(prefix)).length;
 }
 
 export function setCurrentLevel(nivel: Nivel): void {
   const p = getProgress();
   p.nivelAtual = nivel;
   localStorage.setItem(KEY, JSON.stringify(p));
+}
+
+export function getNivelPrefix(nivel: Nivel): string {
+  return NIVEL_PREFIX[nivel];
 }
