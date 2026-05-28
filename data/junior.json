@@ -203,6 +203,7 @@
     "expected_result": [
       { "nome": "Notebook Dell Inspiron", "estoque": 28 }
     ],
+    "ordem_importa": true,
     "keywords_disponiveis": ["SELECT", "FROM", "WHERE", "ORDER BY"],
     "operadores_disponiveis": ["<=", "<", ">="],
     "valores_disponiveis": ["30", "ASC", "DESC"]
@@ -232,6 +233,7 @@
       { "nome": "Galaxy S25", "preco": 7299.99 },
       { "nome": "iPad Air M2", "preco": 5399.99 }
     ],
+    "ordem_importa": true,
     "keywords_disponiveis": ["SELECT", "FROM", "ORDER BY", "LIMIT"],
     "valores_disponiveis": ["DESC", "ASC", "3"]
   },

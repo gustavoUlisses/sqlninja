@@ -20,6 +20,8 @@ export interface Exercicio {
   dica?: string;
   schema: TabelaSchema[];
   expected_result: Row[];
+  /** Se true, a ordem das linhas precisa bater (use para exercícios com ORDER BY). Default: false. */
+  ordem_importa?: boolean;
   keywords_disponiveis: string[];
   funcoes_disponiveis?: string[];
   operadores_disponiveis?: string[];

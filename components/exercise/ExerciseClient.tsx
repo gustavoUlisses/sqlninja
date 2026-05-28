@@ -37,6 +37,7 @@ export function ExerciseClient({
   const [showHint, setShowHint] = useState(false);
   const [alreadyDone, setAlreadyDone] = useState(false);
   const [completedCount, setCompletedCount] = useState(completedInLevel);
+  const [matchReason, setMatchReason] = useState<string | null>(null);
   const editorRef = useRef<string>("");
 
   useEffect(() => {
@@ -74,14 +75,20 @@ export function ExerciseClient({
     setIsLoading(true);
     setOutput(null);
     setIsCorrect(null);
+    setMatchReason(null);
 
     const result = await executeQuery(exercicio.schema, q);
     setOutput(result);
 
     if (result.ok) {
-      const correct = resultsMatch(result.result, exercicio.expected_result);
-      setIsCorrect(correct);
-      if (correct && !alreadyDone) {
+      const match = resultsMatch(
+        result.result,
+        exercicio.expected_result,
+        exercicio.ordem_importa ?? false
+      );
+      setIsCorrect(match.ok);
+      setMatchReason(match.reason ?? null);
+      if (match.ok && !alreadyDone) {
         markCompleted(exercicio.id);
         setAlreadyDone(true);
         setCompletedCount((c) => c + 1);
@@ -238,6 +245,7 @@ export function ExerciseClient({
                 output={output}
                 isCorrect={isCorrect}
                 expectedRows={exercicio.expected_result}
+                reason={matchReason}
                 onNext={isCorrect ? handleNext : undefined}
               />
             </div>

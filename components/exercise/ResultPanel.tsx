@@ -7,6 +7,7 @@ interface ResultPanelProps {
   output: QueryOutput | null;
   isCorrect: boolean | null;
   expectedRows: Row[];
+  reason?: string | null;
   onNext?: () => void;
 }
 
@@ -80,7 +81,7 @@ function ResultTable({
   );
 }
 
-export function ResultPanel({ output, isCorrect, expectedRows, onNext }: ResultPanelProps) {
+export function ResultPanel({ output, isCorrect, expectedRows, reason, onNext }: ResultPanelProps) {
   if (!output) {
     return (
       <div className="flex flex-col items-center justify-center min-h-32 text-white/15">
@@ -161,13 +162,20 @@ export function ResultPanel({ output, isCorrect, expectedRows, onNext }: ResultP
   return (
     <div className="space-y-4">
       <div
-        className="flex items-center gap-2.5 rounded-lg border px-4 py-3"
+        className="rounded-lg border px-4 py-3"
         style={{ backgroundColor: `${RED}12`, borderColor: `${RED}40` }}
       >
-        <X className="w-4 h-4 flex-shrink-0" style={{ color: RED }} />
-        <p className="text-sm font-semibold" style={{ color: RED }}>
-          Resultado diferente do esperado
-        </p>
+        <div className="flex items-center gap-2.5">
+          <X className="w-4 h-4 flex-shrink-0" style={{ color: RED }} />
+          <p className="text-sm font-semibold" style={{ color: RED }}>
+            Resultado diferente do esperado
+          </p>
+        </div>
+        {reason && (
+          <p className="text-xs mt-2 ml-6.5 leading-relaxed" style={{ color: `${RED}b3` }}>
+            {reason}
+          </p>
+        )}
       </div>
       <ResultTable
         columns={output.result.columns}
