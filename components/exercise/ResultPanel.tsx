@@ -31,7 +31,7 @@ function ResultTable({
   return (
     <div>
       <p className="text-xs text-white/30 mb-1.5 font-medium">{label}</p>
-      <div className={`rounded-lg border ${borderColor} overflow-auto max-h-48`}>
+      <div className={`rounded-lg border ${borderColor} overflow-auto`}>
         <table className="w-full text-xs font-mono">
           <thead>
             <tr className="border-b border-white/8 bg-white/3">
