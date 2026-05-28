@@ -71,6 +71,9 @@ export function FragmentBuilder({
         </TabsContent>
 
         <TabsContent value="colunas" className="mt-0 space-y-2">
+          <div className="flex flex-wrap gap-1.5 mb-2">
+            <Tag label="*" onClick={() => onInsert("* ")} />
+          </div>
           {schema.map((table) => (
             <div key={table.nome}>
               <p className="text-xs text-white/25 font-mono mb-1.5">{table.nome}</p>

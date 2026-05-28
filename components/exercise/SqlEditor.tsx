@@ -2,7 +2,8 @@
 
 import CodeMirror from "@uiw/react-codemirror";
 import { sql } from "@codemirror/lang-sql";
-import { dracula } from "@uiw/codemirror-theme-dracula";
+import { draculaInit } from "@uiw/codemirror-theme-dracula";
+import { tags } from "@lezer/highlight";
 import { EditorView } from "@codemirror/view";
 import { Play, Trash2 } from "lucide-react";
 
@@ -15,10 +16,26 @@ interface SqlEditorProps {
   isLoading?: boolean;
 }
 
-const editorTheme = EditorView.theme({
-  "&": { height: "100%", minHeight: "120px" },
-  ".cm-scroller": { overflow: "auto", fontFamily: "var(--font-geist-mono)", fontSize: "13px" },
-  ".cm-content": { padding: "12px" },
+const draculaSQL = draculaInit({
+  styles: [
+    { tag: tags.keyword,                         color: "#ff79c6" },
+    { tag: tags.operator,                        color: "#ff79c6" },
+    { tag: tags.string,                          color: "#f1fa8c" },
+    { tag: tags.number,                          color: "#bd93f9" },
+    { tag: tags.comment,                         color: "#6272a4", fontStyle: "italic" },
+    { tag: tags.name,                            color: "#f8f8f2" },
+    { tag: tags.function(tags.name),             color: "#50fa7b" },
+    { tag: tags.function(tags.variableName),     color: "#50fa7b" },
+    { tag: [tags.bool, tags.null],               color: "#bd93f9" },
+    { tag: tags.punctuation,                     color: "#f8f8f2" },
+    { tag: tags.special(tags.string),            color: "#f1fa8c" },
+  ],
+});
+
+const fontTheme = EditorView.theme({
+  "&":          { height: "100%", minHeight: "120px" },
+  ".cm-scroller": { fontFamily: "var(--font-geist-mono)", fontSize: "13px", overflow: "auto" },
+  ".cm-content":  { padding: "12px" },
 });
 
 export function SqlEditor({ value, onChange, onExecute, onClear, onSemicolon, isLoading }: SqlEditorProps) {
@@ -32,14 +49,14 @@ export function SqlEditor({ value, onChange, onExecute, onClear, onSemicolon, is
   return (
     <div className="flex flex-col h-full">
       <div
-        className="flex-1 rounded-lg overflow-hidden border border-white/8"
+        className="flex-1 rounded-lg overflow-hidden border border-[#44475a]"
         onKeyDown={handleKeyDown}
       >
         <CodeMirror
           value={value}
           onChange={onChange}
-          extensions={[sql(), editorTheme]}
-          theme={dracula}
+          extensions={[sql(), fontTheme]}
+          theme={draculaSQL}
           placeholder="-- Digite sua query SQL aqui..."
           basicSetup={{
             lineNumbers: true,
