@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { Check, BookOpen, Dumbbell, Trophy, ChevronDown, ChevronRight } from "lucide-react";
+import { Check, ChevronRight } from "lucide-react";
 import { getProgress } from "@/lib/progress";
 import type { Exercicio } from "@/lib/types";
 
@@ -155,14 +155,12 @@ function BlocoSection({
 // ── Cabeçalho de seção principal ──────────────────────────────────────────────
 
 function SectionHeader({
-  icon,
   title,
   subtitle,
   count,
   completed,
   accentColor,
 }: {
-  icon: React.ReactNode;
   title: string;
   subtitle: string;
   count: number;
@@ -171,29 +169,21 @@ function SectionHeader({
 }) {
   const pct = count > 0 ? Math.round((completed / count) * 100) : 0;
   return (
-    <div className="flex items-start gap-3.5 mb-4">
-      <div
-        className="shrink-0 w-9 h-9 rounded-lg flex items-center justify-center mt-0.5"
-        style={{ backgroundColor: `${accentColor}15`, border: `1px solid ${accentColor}30` }}
-      >
-        <span style={{ color: accentColor }}>{icon}</span>
+    <div className="mb-4">
+      <div className="flex items-baseline gap-2 flex-wrap">
+        <h2 className="text-base font-bold text-white">{title}</h2>
+        <span className="text-xs text-white/30 font-mono">{completed}/{count} concluídos</span>
       </div>
-      <div className="flex-1 min-w-0">
-        <div className="flex items-baseline gap-2 flex-wrap">
-          <h2 className="text-base font-bold text-white">{title}</h2>
-          <span className="text-xs text-white/30 font-mono">{completed}/{count} concluídos</span>
-        </div>
-        <p className="text-xs text-white/40 mt-0.5">{subtitle}</p>
-        <div className="w-full h-[3px] bg-white/8 rounded-full mt-2 overflow-hidden">
-          <div
-            className="h-full rounded-full transition-all"
-            style={{
-              width: `${pct}%`,
-              backgroundColor: pct === 100 ? "#50fa7b" : accentColor,
-              opacity: 0.7,
-            }}
-          />
-        </div>
+      <p className="text-xs text-white/40 mt-0.5">{subtitle}</p>
+      <div className="w-full h-[3px] bg-white/8 rounded-full mt-2 overflow-hidden">
+        <div
+          className="h-full rounded-full transition-all"
+          style={{
+            width: `${pct}%`,
+            backgroundColor: pct === 100 ? "#50fa7b" : accentColor,
+            opacity: 0.7,
+          }}
+        />
       </div>
     </div>
   );
@@ -236,7 +226,6 @@ export function ExerciseList({ nivel, exercises }: ExerciseListProps) {
       {curriculo.length > 0 && (
         <section>
           <SectionHeader
-            icon={<BookOpen className="w-4 h-4" />}
             title="Currículo"
             subtitle="13 blocos temáticos do SELECT básico até datas e agregação"
             count={curriculo.length}
@@ -270,7 +259,6 @@ export function ExerciseList({ nivel, exercises }: ExerciseListProps) {
       {reforco.length > 0 && (
         <section>
           <SectionHeader
-            icon={<Dumbbell className="w-4 h-4" />}
             title="Reforço"
             subtitle="Exercícios multi-conceito sem dica — combine o que aprendeu"
             count={reforco.length}
@@ -289,7 +277,6 @@ export function ExerciseList({ nivel, exercises }: ExerciseListProps) {
       {entrevista.length > 0 && (
         <section>
           <SectionHeader
-            icon={<Trophy className="w-4 h-4" />}
             title="Simulado de Entrevista"
             subtitle="Valentina Cruz (Engenheira Sênior) te faz 10 perguntas reais de entrevista Júnior"
             count={entrevista.length}
