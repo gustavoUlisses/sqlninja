@@ -157,7 +157,7 @@ export function ExerciseClient({
 
       {/* Resizable 3-panel layout */}
       <div className="flex-1 overflow-hidden">
-        <PanelGroup direction="horizontal" className="h-full">
+        <PanelGroup direction="horizontal" className="h-full" autoSaveId="sqlninja:layout-horizontal">
 
           {/* Left panel: Demand + Schema */}
           <Panel defaultSize={22} minSize={15} maxSize={40} className="hidden md:flex flex-col overflow-hidden">
@@ -200,7 +200,7 @@ export function ExerciseClient({
               <p className="text-sm text-white/60">{exercicio.demanda}</p>
             </div>
 
-            <PanelGroup direction="vertical" className="flex-1 min-h-0">
+            <PanelGroup direction="vertical" className="flex-1 min-h-0" autoSaveId="sqlninja:layout-vertical">
               {/* Editor */}
               <Panel defaultSize={50} minSize={25} className="overflow-hidden">
                 <div className="h-full p-4 pb-2">
