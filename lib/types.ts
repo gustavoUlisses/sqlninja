@@ -11,6 +11,9 @@ export interface TabelaSchema {
   seed: string;
 }
 
+/** Seção à qual o exercício pertence (para agrupamento na lista). */
+export type SecaoExercicio = "curriculo" | "reforco" | "entrevista" | "certificado";
+
 /** Definição de exercício no formato compacto (dataset compartilhado). */
 export interface ExercicioRaw {
   id: string;
@@ -19,6 +22,7 @@ export interface ExercicioRaw {
   titulo: string;
   demanda: string;
   dica?: string;
+  secao: SecaoExercicio;
   /** Nomes das tabelas usadas, em ordem. Resolvidos via dataset do nível. */
   tabelas: string[];
   /** Query gabarito — usada para gerar expected_result automaticamente. */
@@ -40,6 +44,7 @@ export interface Exercicio {
   titulo: string;
   demanda: string;
   dica?: string;
+  secao: SecaoExercicio;
   schema: TabelaSchema[];
   /** Query SQL de referência — executada no client para gerar expected_result. */
   gabarito: string;

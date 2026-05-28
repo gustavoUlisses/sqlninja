@@ -9,19 +9,23 @@ import type { Exercicio } from "@/lib/types";
 // ── Definição dos blocos do currículo ────────────────────────────────────────
 
 const BLOCOS_CURRICULO = [
-  { label: "SELECT Básico",         min: 1,  max: 5,  desc: "SELECT *, colunas, alias, DISTINCT" },
-  { label: "WHERE Numérico",        min: 6,  max: 8,  desc: "=, >, <, >=, <=, != e expressões calculadas" },
-  { label: "WHERE Texto e LIKE",    min: 9,  max: 15, desc: "Filtros de texto e padrões com %" },
-  { label: "IN, BETWEEN e NULL",    min: 16, max: 22, desc: "Listas, intervalos, campos nulos e COALESCE" },
-  { label: "AND, OR e NOT",         min: 23, max: 28, desc: "Combinando condições e precedência" },
-  { label: "ORDER BY e LIMIT",      min: 29, max: 34, desc: "Ordenação, paginação e top-N" },
-  { label: "DISTINCT Avançado",     min: 35, max: 36, desc: "Combinações únicas multi-coluna" },
-  { label: "Aliases e Expressões",  min: 37, max: 41, desc: "AS, cálculos, concatenação ||" },
-  { label: "Funções de Texto",      min: 42, max: 47, desc: "UPPER, LOWER, LENGTH, SUBSTR, TRIM, REPLACE" },
-  { label: "Agregação",             min: 48, max: 53, desc: "COUNT, SUM, AVG, MIN, MAX" },
-  { label: "CASE WHEN",             min: 54, max: 57, desc: "Classificações e condicionais" },
-  { label: "ROUND, ABS e CAST",     min: 58, max: 60, desc: "Funções numéricas e conversão de tipos" },
-  { label: "Datas",                 min: 61, max: 65, desc: "strftime, date('now'), julianday, modifiers" },
+  { label: "SELECT Básico",              min: 1,   max: 5,   desc: "SELECT *, colunas, alias, DISTINCT" },
+  { label: "WHERE Numérico",             min: 6,   max: 8,   desc: "=, >, <, >=, <=, != e expressões calculadas" },
+  { label: "WHERE Texto e LIKE",         min: 9,   max: 15,  desc: "Filtros de texto e padrões com %" },
+  { label: "IN, BETWEEN e NULL",         min: 16,  max: 22,  desc: "Listas, intervalos, campos nulos e COALESCE" },
+  { label: "AND, OR e NOT",              min: 23,  max: 28,  desc: "Combinando condições e precedência" },
+  { label: "ORDER BY e LIMIT",           min: 29,  max: 34,  desc: "Ordenação, paginação e top-N" },
+  { label: "DISTINCT Avançado",          min: 35,  max: 36,  desc: "Combinações únicas multi-coluna" },
+  { label: "Aliases e Expressões",       min: 37,  max: 41,  desc: "AS, cálculos, concatenação ||" },
+  { label: "Funções de Texto",           min: 42,  max: 47,  desc: "UPPER, LOWER, LENGTH, SUBSTR, TRIM, REPLACE" },
+  { label: "Agregação",                  min: 48,  max: 53,  desc: "COUNT, SUM, AVG, MIN, MAX" },
+  { label: "CASE WHEN",                  min: 54,  max: 57,  desc: "Classificações e condicionais" },
+  { label: "ROUND, ABS e CAST",          min: 58,  max: 60,  desc: "Funções numéricas e conversão de tipos" },
+  { label: "Datas",                      min: 61,  max: 65,  desc: "strftime, date('now'), julianday, modifiers" },
+  { label: "Negócios e KPIs Reais",      min: 91,  max: 105, desc: "Margem %, ROI, análise ABC, subqueries, scoring" },
+  { label: "Qualidade de Dados",         min: 106, max: 120, desc: "Data profiling, NULLIF, NOT IN trap, validação, COALESCE avançado" },
+  { label: "SQL Profissional",           min: 121, max: 135, desc: "SARG-able, CASE aninhado, contagem condicional, EXISTS, self-reference" },
+  { label: "Análise e Dashboard",        min: 136, max: 150, desc: "Séries temporais, RFM, dimensão de produto, monitoramento de SLA" },
 ];
 
 // ── Item de exercício ────────────────────────────────────────────────────────
@@ -203,10 +207,10 @@ export function ExerciseList({ nivel, exercises }: ExerciseListProps) {
     setDone(new Set(getProgress().exerciciosConcluidos));
   }, []);
 
-  // Separar exercícios por seção
-  const curriculo = exercises.filter((e) => e.numero <= 65);
-  const reforco = exercises.filter((e) => e.numero >= 66 && e.numero <= 80);
-  const entrevista = exercises.filter((e) => e.numero >= 81);
+  // Separar exercícios por seção usando o campo secao
+  const curriculo = exercises.filter((e) => e.secao === "curriculo");
+  const reforco = exercises.filter((e) => e.secao === "reforco");
+  const entrevista = exercises.filter((e) => e.secao === "entrevista");
 
   const completedCurriculo = curriculo.filter((e) => done.has(e.id)).length;
   const completedReforco = reforco.filter((e) => done.has(e.id)).length;

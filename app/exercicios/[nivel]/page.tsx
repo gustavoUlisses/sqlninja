@@ -4,7 +4,7 @@ import { LEVELS, getLevelInfo } from "@/lib/levels";
 import { getExerciciosByNivel } from "@/lib/exercises";
 import { ExerciseList } from "@/components/exercise/ExerciseList";
 import type { Nivel } from "@/lib/types";
-import { ArrowLeft, Lock } from "lucide-react";
+import { ArrowLeft, Lock, Award } from "lucide-react";
 
 export function generateStaticParams() {
   return LEVELS.map((l) => ({ nivel: l.nivel }));
@@ -50,6 +50,25 @@ export default async function NivelPage({ params }: Props) {
             </p>
           )}
         </div>
+
+        {/* Certificado CTA */}
+        {exercises.length > 0 && nivel === "junior" && (
+          <Link
+            href={`/exercicios/${nivel}/certificado`}
+            className="flex items-center justify-between rounded-xl border border-[#50fa7b]/20 bg-[#50fa7b]/[0.04] px-5 py-4 hover:bg-[#50fa7b]/[0.08] hover:border-[#50fa7b]/35 transition-colors group mb-8"
+          >
+            <div className="flex items-center gap-3">
+              <Award className="w-5 h-5 text-[#50fa7b]/70" />
+              <div>
+                <p className="text-sm font-semibold text-white/85">Certificação Júnior</p>
+                <p className="text-xs text-white/40 mt-0.5">25 questões · PDF ao ser aprovado</p>
+              </div>
+            </div>
+            <span className="text-sm text-[#50fa7b]/60 group-hover:text-[#50fa7b] transition-colors">
+              Fazer prova →
+            </span>
+          </Link>
+        )}
 
         {/* Lista ou estado vazio */}
         {exercises.length === 0 ? (

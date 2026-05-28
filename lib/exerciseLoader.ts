@@ -21,6 +21,7 @@ export function makeExercicio(raw: ExercicioRaw, dataset: Dataset): Exercicio {
     titulo: raw.titulo,
     demanda: raw.demanda,
     dica: raw.dica,
+    secao: raw.secao,
     schema: resolveSchema(raw, dataset),
     gabarito: raw.gabarito,
     ordem_importa: raw.ordem_importa,
