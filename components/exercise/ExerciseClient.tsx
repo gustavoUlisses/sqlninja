@@ -3,6 +3,7 @@
 import { useState, useCallback, useRef, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { Lightbulb, ArrowLeft, Check } from "lucide-react";
+import { Panel, PanelGroup, PanelResizeHandle } from "react-resizable-panels";
 import { SqlEditor } from "./SqlEditor";
 import { FragmentBuilder } from "./FragmentBuilder";
 import { ResultPanel } from "./ResultPanel";
@@ -11,6 +12,60 @@ import { executeQuery, resultsMatch } from "@/lib/sqlEngine";
 import { markCompleted, getProgress } from "@/lib/progress";
 import { getLevelInfo } from "@/lib/levels";
 import type { Exercicio, QueryOutput } from "@/lib/types";
+
+// SQL clause keywords that should start on a new line
+const NEWLINE_KEYWORDS = new Set([
+  "FROM", "WHERE", "GROUP BY", "HAVING", "ORDER BY", "LIMIT",
+  "JOIN", "INNER JOIN", "LEFT JOIN", "RIGHT JOIN", "FULL JOIN", "CROSS JOIN",
+  "ON", "UNION", "UNION ALL", "WITH",
+]);
+
+// Indented sub-clause keywords
+const INDENT_KEYWORDS = new Set(["AND", "OR", "NOT"]);
+
+function smartInsert(current: string, fragment: string): string {
+  const raw = fragment.trim();
+  const trimmed = current.trimEnd();
+
+  // ";" just appends
+  if (raw === ";") return trimmed + ";";
+
+  // Clause keywords: new line
+  if (NEWLINE_KEYWORDS.has(raw)) {
+    if (trimmed === "") return raw + " ";
+    return trimmed + "\n" + raw + " ";
+  }
+
+  // AND / OR: new line with indent
+  if (INDENT_KEYWORDS.has(raw)) {
+    if (trimmed === "") return raw + " ";
+    return trimmed + "\n  " + raw + " ";
+  }
+
+  // SELECT at start
+  if (raw === "SELECT" || raw === "SELECT DISTINCT") {
+    if (trimmed === "") return raw + " ";
+    return trimmed + "\n" + raw + " ";
+  }
+
+  // DISTINCT after SELECT
+  if (raw === "DISTINCT") {
+    return trimmed + " DISTINCT ";
+  }
+
+  // Column names: if we're right after SELECT or a comma, separate with ", "
+  // Detect if the last non-whitespace char is a column/identifier (add comma)
+  const lastLine = trimmed.split("\n").pop() ?? "";
+  const isAfterSelectLine = /^\s*SELECT(\s+DISTINCT)?\s+\S/i.test(lastLine);
+  const endsWithIdentifier = /[\w)"']$/.test(trimmed);
+
+  if (isAfterSelectLine && endsWithIdentifier && !raw.startsWith("'") && !/^[0-9]/.test(raw)) {
+    return trimmed + ", " + raw.trimStart();
+  }
+
+  // Operators and values: just spaces
+  return trimmed + " " + raw.trimStart();
+}
 
 interface ExerciseClientProps {
   exercicio: Exercicio;
@@ -54,7 +109,19 @@ export function ExerciseClient({
   }, []);
 
   const handleInsertFragment = useCallback((fragment: string) => {
-    setQuery((prev) => prev.trimEnd() + fragment);
+    setQuery((prev) => {
+      const next = smartInsert(prev, fragment);
+      editorRef.current = next;
+      return next;
+    });
+  }, []);
+
+  const handleSemicolon = useCallback(() => {
+    setQuery((prev) => {
+      const next = prev.trimEnd() + ";";
+      editorRef.current = next;
+      return next;
+    });
   }, []);
 
   const handleExecute = useCallback(async () => {
@@ -105,7 +172,7 @@ export function ExerciseClient({
             <span className="hidden sm:inline font-medium">{levelInfo.label}</span>
           </button>
           <div className="h-4 w-px bg-white/10" />
-          <span className="text-sm font-medium text-white/70">
+          <span className="text-sm font-medium text-white/70 truncate max-w-xs">
             {exercicio.titulo}
           </span>
         </div>
@@ -131,78 +198,92 @@ export function ExerciseClient({
         </div>
       </header>
 
-      {/* 3-column layout */}
-      <div className="flex-1 flex overflow-hidden">
-        {/* Left: Demand + Schema */}
-        <div className="w-68 shrink-0 border-r border-white/8 overflow-y-auto p-5 space-y-6 hidden md:flex md:flex-col">
-          <div>
-            <p className="text-xs text-white/25 uppercase tracking-widest font-medium mb-3">
-              #{String(exercicio.numero).padStart(2, "0")} — Demanda
-            </p>
-            <p className="text-sm text-white/75 leading-relaxed">
-              {exercicio.demanda}
-            </p>
+      {/* Resizable 3-panel layout */}
+      <div className="flex-1 overflow-hidden">
+        <PanelGroup direction="horizontal" className="h-full">
 
-            {exercicio.dica && (
-              <>
-                <button
-                  onClick={() => setShowHint((h) => !h)}
-                  className="mt-4 flex items-center gap-1.5 text-xs text-white/30 hover:text-white/60 transition-colors"
-                >
-                  <Lightbulb className="w-3.5 h-3.5" />
-                  {showHint ? "Esconder dica" : "Ver dica"}
-                </button>
-                {showHint && (
-                  <div className="mt-2 rounded-lg bg-white/4 border border-white/10 p-3 text-xs text-white/60 leading-relaxed">
-                    {exercicio.dica}
-                  </div>
+          {/* Left panel: Demand + Schema */}
+          <Panel defaultSize={22} minSize={15} maxSize={40} className="hidden md:flex flex-col overflow-hidden">
+            <div className="flex-1 overflow-y-auto p-5 space-y-6">
+              <div>
+                <p className="text-xs text-white/25 uppercase tracking-widest font-medium mb-3">
+                  #{String(exercicio.numero).padStart(2, "0")} — Demanda
+                </p>
+                <p className="text-sm text-white/75 leading-relaxed">
+                  {exercicio.demanda}
+                </p>
+                {exercicio.dica && (
+                  <>
+                    <button
+                      onClick={() => setShowHint((h) => !h)}
+                      className="mt-4 flex items-center gap-1.5 text-xs text-white/30 hover:text-white/60 transition-colors"
+                    >
+                      <Lightbulb className="w-3.5 h-3.5" />
+                      {showHint ? "Esconder dica" : "Ver dica"}
+                    </button>
+                    {showHint && (
+                      <div className="mt-2 rounded-lg bg-white/4 border border-white/10 p-3 text-xs text-white/60 leading-relaxed">
+                        {exercicio.dica}
+                      </div>
+                    )}
+                  </>
                 )}
-              </>
-            )}
-          </div>
+              </div>
+              <SchemaPanel schema={exercicio.schema} />
+            </div>
+          </Panel>
 
-          <SchemaPanel schema={exercicio.schema} />
-        </div>
+          <PanelResizeHandle className="w-px bg-white/8 hover:bg-white/20 active:bg-white/30 transition-colors cursor-col-resize hidden md:block" />
 
-        {/* Center: Editor + Fragment Builder */}
-        <div className="flex-1 flex flex-col overflow-hidden p-4 gap-3">
-          <div className="md:hidden mb-1">
-            <p className="text-xs text-white/30 mb-1">#{exercicio.numero} — {exercicio.titulo}</p>
-            <p className="text-sm text-white/60">{exercicio.demanda}</p>
-          </div>
+          {/* Center panel: Editor + Fragments */}
+          <Panel defaultSize={48} minSize={30} className="flex flex-col overflow-hidden">
+            <div className="flex-1 flex flex-col p-4 gap-3 overflow-hidden">
+              {/* Mobile: demand */}
+              <div className="md:hidden mb-1">
+                <p className="text-xs text-white/30 mb-1">#{exercicio.numero} — {exercicio.titulo}</p>
+                <p className="text-sm text-white/60">{exercicio.demanda}</p>
+              </div>
 
-          <div className="flex-1 overflow-hidden">
-            <SqlEditor
-              value={query}
-              onChange={handleQueryChange}
-              onExecute={handleExecute}
-              onClear={handleClear}
-              isLoading={isLoading}
-            />
-          </div>
+              <div className="flex-1 overflow-hidden min-h-0">
+                <SqlEditor
+                  value={query}
+                  onChange={handleQueryChange}
+                  onExecute={handleExecute}
+                  onClear={handleClear}
+                  onSemicolon={handleSemicolon}
+                  isLoading={isLoading}
+                />
+              </div>
 
-          <FragmentBuilder
-            schema={exercicio.schema}
-            keywords={exercicio.keywords_disponiveis}
-            funcoes={exercicio.funcoes_disponiveis}
-            operadores={exercicio.operadores_disponiveis}
-            valores={exercicio.valores_disponiveis}
-            onInsert={handleInsertFragment}
-          />
-        </div>
+              <FragmentBuilder
+                schema={exercicio.schema}
+                keywords={exercicio.keywords_disponiveis}
+                funcoes={exercicio.funcoes_disponiveis}
+                operadores={exercicio.operadores_disponiveis}
+                valores={exercicio.valores_disponiveis}
+                onInsert={handleInsertFragment}
+              />
+            </div>
+          </Panel>
 
-        {/* Right: Result */}
-        <div className="w-88 shrink-0 border-l border-white/8 overflow-y-auto p-5">
-          <p className="text-xs text-white/25 uppercase tracking-widest font-medium mb-4">
-            Resultado
-          </p>
-          <ResultPanel
-            output={output}
-            isCorrect={isCorrect}
-            expectedRows={exercicio.expected_result}
-            onNext={isCorrect ? handleNext : undefined}
-          />
-        </div>
+          <PanelResizeHandle className="w-px bg-white/8 hover:bg-white/20 active:bg-white/30 transition-colors cursor-col-resize" />
+
+          {/* Right panel: Result */}
+          <Panel defaultSize={30} minSize={20} maxSize={50} className="flex flex-col overflow-hidden">
+            <div className="flex-1 overflow-y-auto p-5">
+              <p className="text-xs text-white/25 uppercase tracking-widest font-medium mb-4">
+                Resultado
+              </p>
+              <ResultPanel
+                output={output}
+                isCorrect={isCorrect}
+                expectedRows={exercicio.expected_result}
+                onNext={isCorrect ? handleNext : undefined}
+              />
+            </div>
+          </Panel>
+
+        </PanelGroup>
       </div>
 
       {/* Footer nav */}

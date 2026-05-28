@@ -11,6 +11,7 @@ interface SqlEditorProps {
   onChange: (val: string) => void;
   onExecute: () => void;
   onClear: () => void;
+  onSemicolon: () => void;
   isLoading?: boolean;
 }
 
@@ -23,7 +24,7 @@ const editorTheme = EditorView.theme({
   ".cm-lineNumbers .cm-gutterElement": { color: "rgba(255,255,255,0.2)" },
 });
 
-export function SqlEditor({ value, onChange, onExecute, onClear, isLoading }: SqlEditorProps) {
+export function SqlEditor({ value, onChange, onExecute, onClear, onSemicolon, isLoading }: SqlEditorProps) {
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if ((e.ctrlKey || e.metaKey) && e.key === "Enter") {
       e.preventDefault();
@@ -65,6 +66,13 @@ export function SqlEditor({ value, onChange, onExecute, onClear, isLoading }: Sq
           >
             <Trash2 className="w-3 h-3" />
             Limpar
+          </button>
+          <button
+            onClick={onSemicolon}
+            title="Inserir ponto e vírgula"
+            className="text-xs font-mono font-bold text-white/40 hover:text-white/80 px-3 py-1.5 rounded-lg border border-white/8 hover:bg-white/4 transition-colors"
+          >
+            ;
           </button>
           <button
             onClick={onExecute}
