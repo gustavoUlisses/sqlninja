@@ -1,0 +1,297 @@
+[
+  {
+    "id": "jr-001",
+    "nivel": "junior",
+    "numero": 1,
+    "titulo": "Bem-vindo à DataCo!",
+    "demanda": "Olá! Seja bem-vindo ao seu primeiro dia na DataCo, maior e-commerce de eletrônicos do Brasil. Sua gestora Ana Beatriz pediu para você fazer um levantamento simples: liste TODOS os produtos cadastrados no sistema. Ela quer ver todas as informações disponíveis.",
+    "dica": "Use SELECT * para selecionar todas as colunas de uma tabela. O asterisco (*) significa \"tudo\".",
+    "schema": [
+      {
+        "nome": "produtos",
+        "colunas": [
+          { "nome": "id", "tipo": "INTEGER" },
+          { "nome": "nome", "tipo": "TEXT" },
+          { "nome": "categoria", "tipo": "TEXT" },
+          { "nome": "preco", "tipo": "REAL" },
+          { "nome": "estoque", "tipo": "INTEGER" }
+        ],
+        "seed": "CREATE TABLE produtos (id INTEGER, nome TEXT, categoria TEXT, preco REAL, estoque INTEGER); INSERT INTO produtos VALUES (1, 'iPhone 16 Pro', 'Smartphones', 9499.99, 45), (2, 'Galaxy S25', 'Smartphones', 7299.99, 62), (3, 'Notebook Dell Inspiron', 'Notebooks', 4299.99, 28), (4, 'AirPods Pro 2', 'Audio', 2199.99, 94), (5, 'iPad Air M2', 'Tablets', 5399.99, 31), (6, 'Mouse Logitech MX', 'Periféricos', 549.99, 150), (7, 'Teclado Mecânico Keychron', 'Periféricos', 799.99, 77), (8, 'Monitor LG 27\"', 'Monitores', 1899.99, 42);"
+      }
+    ],
+    "expected_result": [
+      { "id": 1, "nome": "iPhone 16 Pro", "categoria": "Smartphones", "preco": 9499.99, "estoque": 45 },
+      { "id": 2, "nome": "Galaxy S25", "categoria": "Smartphones", "preco": 7299.99, "estoque": 62 },
+      { "id": 3, "nome": "Notebook Dell Inspiron", "categoria": "Notebooks", "preco": 4299.99, "estoque": 28 },
+      { "id": 4, "nome": "AirPods Pro 2", "categoria": "Audio", "preco": 2199.99, "estoque": 94 },
+      { "id": 5, "nome": "iPad Air M2", "categoria": "Tablets", "preco": 5399.99, "estoque": 31 },
+      { "id": 6, "nome": "Mouse Logitech MX", "categoria": "Periféricos", "preco": 549.99, "estoque": 150 },
+      { "id": 7, "nome": "Teclado Mecânico Keychron", "categoria": "Periféricos", "preco": 799.99, "estoque": 77 },
+      { "id": 8, "nome": "Monitor LG 27\"", "categoria": "Monitores", "preco": 1899.99, "estoque": 42 }
+    ],
+    "keywords_disponiveis": ["SELECT", "FROM"],
+    "valores_disponiveis": ["*"]
+  },
+  {
+    "id": "jr-002",
+    "nivel": "junior",
+    "numero": 2,
+    "titulo": "Lista de Nomes",
+    "demanda": "A equipe de marketing precisa de uma lista com apenas os NOMES dos produtos para criar uma campanha de email. Eles não precisam das outras informações — só a coluna 'nome'.",
+    "dica": "Em vez de SELECT *, especifique o nome da coluna que você quer: SELECT nome FROM tabela",
+    "schema": [
+      {
+        "nome": "produtos",
+        "colunas": [
+          { "nome": "id", "tipo": "INTEGER" },
+          { "nome": "nome", "tipo": "TEXT" },
+          { "nome": "categoria", "tipo": "TEXT" },
+          { "nome": "preco", "tipo": "REAL" },
+          { "nome": "estoque", "tipo": "INTEGER" }
+        ],
+        "seed": "CREATE TABLE produtos (id INTEGER, nome TEXT, categoria TEXT, preco REAL, estoque INTEGER); INSERT INTO produtos VALUES (1, 'iPhone 16 Pro', 'Smartphones', 9499.99, 45), (2, 'Galaxy S25', 'Smartphones', 7299.99, 62), (3, 'Notebook Dell Inspiron', 'Notebooks', 4299.99, 28), (4, 'AirPods Pro 2', 'Audio', 2199.99, 94), (5, 'iPad Air M2', 'Tablets', 5399.99, 31), (6, 'Mouse Logitech MX', 'Periféricos', 549.99, 150), (7, 'Teclado Mecânico Keychron', 'Periféricos', 799.99, 77), (8, 'Monitor LG 27\"', 'Monitores', 1899.99, 42);"
+      }
+    ],
+    "expected_result": [
+      { "nome": "iPhone 16 Pro" },
+      { "nome": "Galaxy S25" },
+      { "nome": "Notebook Dell Inspiron" },
+      { "nome": "AirPods Pro 2" },
+      { "nome": "iPad Air M2" },
+      { "nome": "Mouse Logitech MX" },
+      { "nome": "Teclado Mecânico Keychron" },
+      { "nome": "Monitor LG 27\"" }
+    ],
+    "keywords_disponiveis": ["SELECT", "FROM"]
+  },
+  {
+    "id": "jr-003",
+    "nivel": "junior",
+    "numero": 3,
+    "titulo": "Produtos de Alto Valor",
+    "demanda": "O setor financeiro quer analisar produtos de alto ticket. Liste o nome e o preço de todos os produtos com preço MAIOR OU IGUAL a R$5.000,00.",
+    "dica": "Use WHERE para filtrar linhas. Para comparar números: WHERE preco >= 5000",
+    "schema": [
+      {
+        "nome": "produtos",
+        "colunas": [
+          { "nome": "id", "tipo": "INTEGER" },
+          { "nome": "nome", "tipo": "TEXT" },
+          { "nome": "categoria", "tipo": "TEXT" },
+          { "nome": "preco", "tipo": "REAL" },
+          { "nome": "estoque", "tipo": "INTEGER" }
+        ],
+        "seed": "CREATE TABLE produtos (id INTEGER, nome TEXT, categoria TEXT, preco REAL, estoque INTEGER); INSERT INTO produtos VALUES (1, 'iPhone 16 Pro', 'Smartphones', 9499.99, 45), (2, 'Galaxy S25', 'Smartphones', 7299.99, 62), (3, 'Notebook Dell Inspiron', 'Notebooks', 4299.99, 28), (4, 'AirPods Pro 2', 'Audio', 2199.99, 94), (5, 'iPad Air M2', 'Tablets', 5399.99, 31), (6, 'Mouse Logitech MX', 'Periféricos', 549.99, 150), (7, 'Teclado Mecânico Keychron', 'Periféricos', 799.99, 77), (8, 'Monitor LG 27\"', 'Monitores', 1899.99, 42);"
+      }
+    ],
+    "expected_result": [
+      { "nome": "iPhone 16 Pro", "preco": 9499.99 },
+      { "nome": "Galaxy S25", "preco": 7299.99 },
+      { "nome": "iPad Air M2", "preco": 5399.99 }
+    ],
+    "keywords_disponiveis": ["SELECT", "FROM", "WHERE"],
+    "operadores_disponiveis": [">=", ">", "=", "<", "<="],
+    "valores_disponiveis": ["5000"]
+  },
+  {
+    "id": "jr-004",
+    "nivel": "junior",
+    "numero": 4,
+    "titulo": "Smartphones em Estoque",
+    "demanda": "O gestor de logística precisa saber quais smartphones temos disponíveis. Traga o nome, preço e estoque de todos os produtos da categoria 'Smartphones'.",
+    "dica": "Para filtrar por texto, use aspas simples: WHERE categoria = 'Smartphones'",
+    "schema": [
+      {
+        "nome": "produtos",
+        "colunas": [
+          { "nome": "id", "tipo": "INTEGER" },
+          { "nome": "nome", "tipo": "TEXT" },
+          { "nome": "categoria", "tipo": "TEXT" },
+          { "nome": "preco", "tipo": "REAL" },
+          { "nome": "estoque", "tipo": "INTEGER" }
+        ],
+        "seed": "CREATE TABLE produtos (id INTEGER, nome TEXT, categoria TEXT, preco REAL, estoque INTEGER); INSERT INTO produtos VALUES (1, 'iPhone 16 Pro', 'Smartphones', 9499.99, 45), (2, 'Galaxy S25', 'Smartphones', 7299.99, 62), (3, 'Notebook Dell Inspiron', 'Notebooks', 4299.99, 28), (4, 'AirPods Pro 2', 'Audio', 2199.99, 94), (5, 'iPad Air M2', 'Tablets', 5399.99, 31), (6, 'Mouse Logitech MX', 'Periféricos', 549.99, 150), (7, 'Teclado Mecânico Keychron', 'Periféricos', 799.99, 77), (8, 'Monitor LG 27\"', 'Monitores', 1899.99, 42);"
+      }
+    ],
+    "expected_result": [
+      { "nome": "iPhone 16 Pro", "preco": 9499.99, "estoque": 45 },
+      { "nome": "Galaxy S25", "preco": 7299.99, "estoque": 62 }
+    ],
+    "keywords_disponiveis": ["SELECT", "FROM", "WHERE"],
+    "operadores_disponiveis": ["="],
+    "valores_disponiveis": ["'Smartphones'"]
+  },
+  {
+    "id": "jr-005",
+    "nivel": "junior",
+    "numero": 5,
+    "titulo": "Pedidos de Março",
+    "demanda": "O time de vendas quer analisar os pedidos de março de 2026. Traga o id, cliente_id, valor e data_pedido de TODOS os pedidos feitos em março de 2026.",
+    "dica": "Use LIKE com o padrão '2026-03%' para filtrar datas que começam com esse prefixo. O % substitui qualquer sequência de caracteres.",
+    "schema": [
+      {
+        "nome": "pedidos",
+        "colunas": [
+          { "nome": "id", "tipo": "INTEGER" },
+          { "nome": "cliente_id", "tipo": "INTEGER" },
+          { "nome": "valor", "tipo": "REAL" },
+          { "nome": "data_pedido", "tipo": "TEXT" },
+          { "nome": "status", "tipo": "TEXT" }
+        ],
+        "seed": "CREATE TABLE pedidos (id INTEGER, cliente_id INTEGER, valor REAL, data_pedido TEXT, status TEXT); INSERT INTO pedidos VALUES (1, 101, 9499.99, '2026-03-02', 'entregue'), (2, 205, 1349.98, '2026-03-08', 'entregue'), (3, 87, 7299.99, '2026-03-15', 'enviado'), (4, 314, 2199.99, '2026-02-28', 'entregue'), (5, 198, 5399.99, '2026-04-01', 'processando'), (6, 77, 4299.99, '2026-03-22', 'entregue'), (7, 423, 799.99, '2026-02-14', 'entregue'), (8, 156, 1899.99, '2026-03-30', 'enviado');"
+      }
+    ],
+    "expected_result": [
+      { "id": 1, "cliente_id": 101, "valor": 9499.99, "data_pedido": "2026-03-02" },
+      { "id": 2, "cliente_id": 205, "valor": 1349.98, "data_pedido": "2026-03-08" },
+      { "id": 3, "cliente_id": 87, "valor": 7299.99, "data_pedido": "2026-03-15" },
+      { "id": 6, "cliente_id": 77, "valor": 4299.99, "data_pedido": "2026-03-22" },
+      { "id": 8, "cliente_id": 156, "valor": 1899.99, "data_pedido": "2026-03-30" }
+    ],
+    "keywords_disponiveis": ["SELECT", "FROM", "WHERE", "LIKE"],
+    "valores_disponiveis": ["'2026-03%'"]
+  },
+  {
+    "id": "jr-006",
+    "nivel": "junior",
+    "numero": 6,
+    "titulo": "Pedidos Grandes e Entregues",
+    "demanda": "O gerente de operações quer uma lista de pedidos de alto valor já entregues, para análise de satisfação. Traga id, valor e status dos pedidos com valor MAIOR QUE R$2.000,00 E status igual a 'entregue'.",
+    "dica": "Use AND para combinar duas condições no WHERE. Ambas precisam ser verdadeiras ao mesmo tempo.",
+    "schema": [
+      {
+        "nome": "pedidos",
+        "colunas": [
+          { "nome": "id", "tipo": "INTEGER" },
+          { "nome": "cliente_id", "tipo": "INTEGER" },
+          { "nome": "valor", "tipo": "REAL" },
+          { "nome": "data_pedido", "tipo": "TEXT" },
+          { "nome": "status", "tipo": "TEXT" }
+        ],
+        "seed": "CREATE TABLE pedidos (id INTEGER, cliente_id INTEGER, valor REAL, data_pedido TEXT, status TEXT); INSERT INTO pedidos VALUES (1, 101, 9499.99, '2026-03-02', 'entregue'), (2, 205, 1349.98, '2026-03-08', 'entregue'), (3, 87, 7299.99, '2026-03-15', 'enviado'), (4, 314, 2199.99, '2026-02-28', 'entregue'), (5, 198, 5399.99, '2026-04-01', 'processando'), (6, 77, 4299.99, '2026-03-22', 'entregue'), (7, 423, 799.99, '2026-02-14', 'entregue'), (8, 156, 1899.99, '2026-03-30', 'enviado');"
+      }
+    ],
+    "expected_result": [
+      { "id": 1, "valor": 9499.99, "status": "entregue" },
+      { "id": 4, "valor": 2199.99, "status": "entregue" },
+      { "id": 6, "valor": 4299.99, "status": "entregue" }
+    ],
+    "keywords_disponiveis": ["SELECT", "FROM", "WHERE", "AND"],
+    "operadores_disponiveis": [">", "="],
+    "valores_disponiveis": ["2000", "'entregue'"]
+  },
+  {
+    "id": "jr-007",
+    "nivel": "junior",
+    "numero": 7,
+    "titulo": "Estoque Crítico",
+    "demanda": "Alerta de reposição! A Ana Beatriz precisa identificar os produtos com estoque crítico. Traga o nome e estoque dos produtos com estoque MENOR OU IGUAL a 30 unidades, ordenados do menor para o maior estoque.",
+    "dica": "Use ORDER BY coluna ASC para ordenar crescente. ASC é o padrão, então pode omitir.",
+    "schema": [
+      {
+        "nome": "produtos",
+        "colunas": [
+          { "nome": "id", "tipo": "INTEGER" },
+          { "nome": "nome", "tipo": "TEXT" },
+          { "nome": "categoria", "tipo": "TEXT" },
+          { "nome": "preco", "tipo": "REAL" },
+          { "nome": "estoque", "tipo": "INTEGER" }
+        ],
+        "seed": "CREATE TABLE produtos (id INTEGER, nome TEXT, categoria TEXT, preco REAL, estoque INTEGER); INSERT INTO produtos VALUES (1, 'iPhone 16 Pro', 'Smartphones', 9499.99, 45), (2, 'Galaxy S25', 'Smartphones', 7299.99, 62), (3, 'Notebook Dell Inspiron', 'Notebooks', 4299.99, 28), (4, 'AirPods Pro 2', 'Audio', 2199.99, 94), (5, 'iPad Air M2', 'Tablets', 5399.99, 31), (6, 'Mouse Logitech MX', 'Periféricos', 549.99, 150), (7, 'Teclado Mecânico Keychron', 'Periféricos', 799.99, 77), (8, 'Monitor LG 27\"', 'Monitores', 1899.99, 42);"
+      }
+    ],
+    "expected_result": [
+      { "nome": "Notebook Dell Inspiron", "estoque": 28 }
+    ],
+    "keywords_disponiveis": ["SELECT", "FROM", "WHERE", "ORDER BY"],
+    "operadores_disponiveis": ["<=", "<", ">="],
+    "valores_disponiveis": ["30", "ASC", "DESC"]
+  },
+  {
+    "id": "jr-008",
+    "nivel": "junior",
+    "numero": 8,
+    "titulo": "Top 3 Mais Caros",
+    "demanda": "O time de precificação quer os 3 produtos mais caros do catálogo para análise de posicionamento. Traga o nome e o preço, ordenados do mais caro para o mais barato, mostrando apenas os 3 primeiros.",
+    "dica": "Use ORDER BY preco DESC para ordenar do maior para o menor. Depois LIMIT 3 para pegar só os 3 primeiros.",
+    "schema": [
+      {
+        "nome": "produtos",
+        "colunas": [
+          { "nome": "id", "tipo": "INTEGER" },
+          { "nome": "nome", "tipo": "TEXT" },
+          { "nome": "categoria", "tipo": "TEXT" },
+          { "nome": "preco", "tipo": "REAL" },
+          { "nome": "estoque", "tipo": "INTEGER" }
+        ],
+        "seed": "CREATE TABLE produtos (id INTEGER, nome TEXT, categoria TEXT, preco REAL, estoque INTEGER); INSERT INTO produtos VALUES (1, 'iPhone 16 Pro', 'Smartphones', 9499.99, 45), (2, 'Galaxy S25', 'Smartphones', 7299.99, 62), (3, 'Notebook Dell Inspiron', 'Notebooks', 4299.99, 28), (4, 'AirPods Pro 2', 'Audio', 2199.99, 94), (5, 'iPad Air M2', 'Tablets', 5399.99, 31), (6, 'Mouse Logitech MX', 'Periféricos', 549.99, 150), (7, 'Teclado Mecânico Keychron', 'Periféricos', 799.99, 77), (8, 'Monitor LG 27\"', 'Monitores', 1899.99, 42);"
+      }
+    ],
+    "expected_result": [
+      { "nome": "iPhone 16 Pro", "preco": 9499.99 },
+      { "nome": "Galaxy S25", "preco": 7299.99 },
+      { "nome": "iPad Air M2", "preco": 5399.99 }
+    ],
+    "keywords_disponiveis": ["SELECT", "FROM", "ORDER BY", "LIMIT"],
+    "valores_disponiveis": ["DESC", "ASC", "3"]
+  },
+  {
+    "id": "jr-009",
+    "nivel": "junior",
+    "numero": 9,
+    "titulo": "Categorias Únicas",
+    "demanda": "O time de BI está montando o painel de categorias do site. Eles precisam de uma lista de todas as categorias disponíveis, SEM repetições. Retorne apenas a coluna 'categoria'.",
+    "dica": "Use DISTINCT para eliminar valores duplicados: SELECT DISTINCT categoria FROM produtos",
+    "schema": [
+      {
+        "nome": "produtos",
+        "colunas": [
+          { "nome": "id", "tipo": "INTEGER" },
+          { "nome": "nome", "tipo": "TEXT" },
+          { "nome": "categoria", "tipo": "TEXT" },
+          { "nome": "preco", "tipo": "REAL" },
+          { "nome": "estoque", "tipo": "INTEGER" }
+        ],
+        "seed": "CREATE TABLE produtos (id INTEGER, nome TEXT, categoria TEXT, preco REAL, estoque INTEGER); INSERT INTO produtos VALUES (1, 'iPhone 16 Pro', 'Smartphones', 9499.99, 45), (2, 'Galaxy S25', 'Smartphones', 7299.99, 62), (3, 'Notebook Dell Inspiron', 'Notebooks', 4299.99, 28), (4, 'AirPods Pro 2', 'Audio', 2199.99, 94), (5, 'iPad Air M2', 'Tablets', 5399.99, 31), (6, 'Mouse Logitech MX', 'Periféricos', 549.99, 150), (7, 'Teclado Mecânico Keychron', 'Periféricos', 799.99, 77), (8, 'Monitor LG 27\"', 'Monitores', 1899.99, 42);"
+      }
+    ],
+    "expected_result": [
+      { "categoria": "Smartphones" },
+      { "categoria": "Notebooks" },
+      { "categoria": "Audio" },
+      { "categoria": "Tablets" },
+      { "categoria": "Periféricos" },
+      { "categoria": "Monitores" }
+    ],
+    "keywords_disponiveis": ["SELECT", "FROM", "DISTINCT"]
+  },
+  {
+    "id": "jr-010",
+    "nivel": "junior",
+    "numero": 10,
+    "titulo": "Periféricos ou Áudio",
+    "demanda": "O gerente de categoria quer ver os produtos em 'Periféricos' OU 'Audio'. Traga o nome e a categoria desses produtos.",
+    "dica": "Use IN para verificar se um valor está em uma lista: WHERE categoria IN ('valor1', 'valor2'). Também pode usar OR.",
+    "schema": [
+      {
+        "nome": "produtos",
+        "colunas": [
+          { "nome": "id", "tipo": "INTEGER" },
+          { "nome": "nome", "tipo": "TEXT" },
+          { "nome": "categoria", "tipo": "TEXT" },
+          { "nome": "preco", "tipo": "REAL" },
+          { "nome": "estoque", "tipo": "INTEGER" }
+        ],
+        "seed": "CREATE TABLE produtos (id INTEGER, nome TEXT, categoria TEXT, preco REAL, estoque INTEGER); INSERT INTO produtos VALUES (1, 'iPhone 16 Pro', 'Smartphones', 9499.99, 45), (2, 'Galaxy S25', 'Smartphones', 7299.99, 62), (3, 'Notebook Dell Inspiron', 'Notebooks', 4299.99, 28), (4, 'AirPods Pro 2', 'Audio', 2199.99, 94), (5, 'iPad Air M2', 'Tablets', 5399.99, 31), (6, 'Mouse Logitech MX', 'Periféricos', 549.99, 150), (7, 'Teclado Mecânico Keychron', 'Periféricos', 799.99, 77), (8, 'Monitor LG 27\"', 'Monitores', 1899.99, 42);"
+      }
+    ],
+    "expected_result": [
+      { "nome": "AirPods Pro 2", "categoria": "Audio" },
+      { "nome": "Mouse Logitech MX", "categoria": "Periféricos" },
+      { "nome": "Teclado Mecânico Keychron", "categoria": "Periféricos" }
+    ],
+    "keywords_disponiveis": ["SELECT", "FROM", "WHERE", "IN", "OR"],
+    "operadores_disponiveis": ["=", "IN"],
+    "valores_disponiveis": ["'Periféricos'", "'Audio'"]
+  }
+]
