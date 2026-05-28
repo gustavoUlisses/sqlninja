@@ -2,7 +2,7 @@
 
 import CodeMirror from "@uiw/react-codemirror";
 import { sql } from "@codemirror/lang-sql";
-import { oneDark } from "@codemirror/theme-one-dark";
+import { dracula } from "@uiw/codemirror-theme-dracula";
 import { EditorView } from "@codemirror/view";
 import { Play, Trash2 } from "lucide-react";
 
@@ -16,12 +16,9 @@ interface SqlEditorProps {
 }
 
 const editorTheme = EditorView.theme({
-  "&": { height: "100%", minHeight: "120px", background: "transparent" },
-  ".cm-editor": { background: "transparent" },
+  "&": { height: "100%", minHeight: "120px" },
   ".cm-scroller": { overflow: "auto", fontFamily: "var(--font-geist-mono)", fontSize: "13px" },
   ".cm-content": { padding: "12px" },
-  ".cm-gutters": { background: "rgba(255,255,255,0.02)", borderRight: "1px solid rgba(255,255,255,0.06)" },
-  ".cm-lineNumbers .cm-gutterElement": { color: "rgba(255,255,255,0.2)" },
 });
 
 export function SqlEditor({ value, onChange, onExecute, onClear, onSemicolon, isLoading }: SqlEditorProps) {
@@ -35,14 +32,14 @@ export function SqlEditor({ value, onChange, onExecute, onClear, onSemicolon, is
   return (
     <div className="flex flex-col h-full">
       <div
-        className="flex-1 rounded-lg overflow-hidden border border-white/8 bg-white/3"
+        className="flex-1 rounded-lg overflow-hidden border border-white/8"
         onKeyDown={handleKeyDown}
       >
         <CodeMirror
           value={value}
           onChange={onChange}
           extensions={[sql(), editorTheme]}
-          theme={oneDark}
+          theme={dracula}
           placeholder="-- Digite sua query SQL aqui..."
           basicSetup={{
             lineNumbers: true,
